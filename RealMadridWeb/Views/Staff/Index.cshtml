@@ -1,0 +1,30 @@
+@model IEnumerable<RealMadridWeb.Models.Staff>
+
+@{
+    ViewData["Title"] = "Staff Management";
+}
+
+<div class="d-flex justify-content-between align-items-center my-4">
+    <h1>Club Staff Members</h1>
+    <a asp-action="Create" class="btn btn-primary">Add New Staff</a>
+</div>
+
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Assigned Team</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Role</td>
+                <td>@(item.Team != null ? item.Team.Name : "No Team")</td>
+            </tr>
+        }
+    </tbody>
+</table>

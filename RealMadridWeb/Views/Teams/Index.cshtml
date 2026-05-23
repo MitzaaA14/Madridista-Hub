@@ -1,0 +1,28 @@
+@model IEnumerable<RealMadridWeb.Models.Team>
+
+@{
+    ViewData["Title"] = "Teams Management";
+}
+
+<div class="d-flex justify-content-between align-items-center my-4">
+    <h1>Club Teams</h1>
+    <a asp-action="Create" class="btn btn-primary">Add New Team</a>
+</div>
+
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Team Name</th>
+            <th>League</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var team in Model)
+        {
+            <tr>
+                <td>@team.Name</td>
+                <td>@team.League</td>
+            </tr>
+        }
+    </tbody>
+</table>

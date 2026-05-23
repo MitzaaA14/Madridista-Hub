@@ -1,0 +1,29 @@
+@model RealMadridWeb.Models.Sponsor
+
+@{
+    ViewData["Title"] = "Create Sponsor";
+}
+
+<h1>Add New Club Sponsor</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" method="post">
+            <div class="form-group mb-3">
+                <label asp-for="Name" class="form-label">Sponsor Name</label>
+                <input asp-for="Name" class="form-control" placeholder="e.g., Adidas, Emirates" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Type" class="form-label">Partnership Type</label>
+                <input asp-for="Type" class="form-control" placeholder="e.g., Main Kit Sponsor, Global Partner" />
+                <span asp-validation-for="Type" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-success">Save Sponsor</button>
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </form>
+    </div>
+</div>

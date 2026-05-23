@@ -1,0 +1,29 @@
+@model RealMadridWeb.Models.Team
+
+@{
+    ViewData["Title"] = "Create Team";
+}
+
+<h1>Add New Club Team</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" method="post">
+            <div class="form-group mb-3">
+                <label asp-for="Name" class="form-label">Team Name</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="League" class="form-label">League</label>
+                <input asp-for="League" class="form-control" />
+                <span asp-validation-for="League" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-success">Save Team</button>
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </form>
+    </div>
+</div>

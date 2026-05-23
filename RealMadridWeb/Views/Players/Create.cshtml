@@ -1,0 +1,53 @@
+@model RealMadridWeb.Models.Player
+
+@{
+    ViewData["Title"] = "Add Player";
+}
+
+<h1>Add a New Galactic</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" method="post">
+            <div class="form-group mb-3">
+                <label asp-for="Name" class="form-label">Player Name</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Position" class="form-label">Position</label>
+                <select asp-for="Position" class="form-control">
+                    <option value="Goalkeeper">Goalkeeper</option>
+                    <option value="Defender">Defender</option>
+                    <option value="Midfielder">Midfielder</option>
+                    <option value="Forward">Forward</option>
+                </select>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="TeamId" class="form-label">Assigned Team</label>
+                <select asp-for="TeamId" class="form-control" asp-items="ViewBag.TeamId"></select>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="ShirtNumber" class="form-label">Shirt Number</label>
+                <input asp-for="ShirtNumber" type="number" class="form-control" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Goals" class="form-label">Goals</label>
+                <input asp-for="Goals" type="number" class="form-control" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Assists" class="form-label">Assists</label>
+                <input asp-for="Assists" type="number" class="form-control" />
+            </div>
+
+            <button type="submit" class="btn btn-success">Save Player</button>
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </form>
+    </div>
+</div>

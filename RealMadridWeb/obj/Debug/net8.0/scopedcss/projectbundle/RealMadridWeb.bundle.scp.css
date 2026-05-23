@@ -1,0 +1,49 @@
+/* _content/RealMadridWeb/Views/Shared/_Layout.cshtml.rz.scp.css */
+/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+a.navbar-brand[b-ane3hvvize] {
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+}
+
+a[b-ane3hvvize] {
+  color: #0077cc;
+}
+
+.btn-primary[b-ane3hvvize] {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.nav-pills .nav-link.active[b-ane3hvvize], .nav-pills .show > .nav-link[b-ane3hvvize] {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.border-top[b-ane3hvvize] {
+  border-top: 1px solid #e5e5e5;
+}
+.border-bottom[b-ane3hvvize] {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow[b-ane3hvvize] {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy[b-ane3hvvize] {
+  font-size: 1rem;
+  line-height: inherit;
+}
+
+.footer[b-ane3hvvize] {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  line-height: 60px;
+}

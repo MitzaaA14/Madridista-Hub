@@ -1,0 +1,30 @@
+@model IEnumerable<RealMadridWeb.Models.Match>
+
+@{
+    ViewData["Title"] = "Matches";
+}
+
+<div class="d-flex justify-content-between align-items-center my-4">
+    <h1>Match Fixtures & Results</h1>
+    <a asp-action="Create" class="btn btn-primary">Log New Match</a>
+</div>
+
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Opponent</th>
+            <th>Date</th>
+            <th>Stadium</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td><strong>vs @item.Opponent</strong></td>
+                <td>@item.Date.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>@item.Stadium</td>
+            </tr>
+        }
+    </tbody>
+</table>

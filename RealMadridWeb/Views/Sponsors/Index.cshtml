@@ -1,0 +1,28 @@
+@model IEnumerable<RealMadridWeb.Models.Sponsor>
+
+@{
+    ViewData["Title"] = "Sponsors";
+}
+
+<div class="d-flex justify-content-between align-items-center my-4">
+    <h1>Official Club Sponsors</h1>
+    <a asp-action="Create" class="btn btn-primary">Add New Sponsor</a>
+</div>
+
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Sponsor Name</th>
+            <th>Partnership Type</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td><strong>@item.Name</strong></td>
+                <td>@item.Type</td>
+            </tr>
+        }
+    </tbody>
+</table>
