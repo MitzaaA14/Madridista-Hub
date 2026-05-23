@@ -4,26 +4,29 @@
     ViewData["Title"] = "Create Team";
 }
 
-<h1>Add New Club Team</h1>
-<hr />
-
-<div class="row">
-    <div class="col-md-6">
+<div class="row justify-content-center">
+    <div class="col-md-6 card p-4 shadow-sm my-5 border-0 rounded-3" style="background: #ffffff;">
+        <h2 class="fw-bold mb-4" style="color: #0f1c3f;">Add New Team</h2>
+        
         <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
             <div class="form-group mb-3">
-                <label asp-for="Name" class="form-label">Team Name</label>
-                <input asp-for="Name" class="form-control" />
+                <label asp-for="Name" class="form-label fw-semibold text-secondary">Team Name</label>
+                <input asp-for="Name" class="form-control" style="border-radius: 8px;" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="League" class="form-label">League</label>
-                <input asp-for="League" class="form-control" />
-                <span asp-validation-for="League" class="text-danger"></span>
+            <div class="form-group mb-4">
+                <label asp-for="ImageUrl" class="form-label fw-semibold text-secondary">Team Cover Image URL</label>
+                <input asp-for="ImageUrl" class="form-control" style="border-radius: 8px;" placeholder="https://..." />
+                <span asp-validation-for="ImageUrl" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn btn-success">Save Team</button>
-            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary w-100 py-2">Create Team</button>
+                <a asp-action="Index" class="btn btn-outline-secondary w-100 py-2" style="border-radius: 8px;">Cancel</a>
+            </div>
         </form>
     </div>
 </div>

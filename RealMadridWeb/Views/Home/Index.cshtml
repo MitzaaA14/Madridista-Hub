@@ -1,8 +1,97 @@
-﻿@{
+﻿@model RealMadridWeb.Models.Match
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="p-5 mb-4 bg-dark text-white rounded-3 shadow-sm" style="background: linear-gradient(135deg, #0f1c3f 0%, #1a2e63 100%) !important;">
+    <div class="container-fluid py-2">
+        <h1 class="display-4 fw-bold text-uppercase" style="letter-spacing: 1px;">Welcome to Madridista Hub</h1>
+        <p class="col-md-10 fs-5 text-white-50">The ultimate management dashboard for Real Madrid squads, match analytics, staff directory, and sponsor tracking.</p>
+        <a asp-controller="Players" asp-action="Index" class="btn btn-gold px-4 py-2 mt-2">Explore Squad</a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card h-100 border-0 shadow-sm p-4" style="background: #ffffff; border-radius: 12px;">
+            <h2 class="fw-bold mb-3" style="color: #0f1c3f;">Next Match</h2>
+            
+            @if (Model != null)
+            {
+                <div class="text-center p-3 bg-light rounded-3">
+                    <div class="d-flex justify-content-center gap-1 mb-2">
+                        <span class="badge bg-primary text-uppercase" style="font-size: 0.65rem;">@(Model.Team?.Name ?? "Real Madrid")</span>
+                        <span class="badge bg-dark text-uppercase" style="font-size: 0.65rem;">@Model.League</span>
+                        <span class="badge bg-secondary text-uppercase" style="font-size: 0.65rem;">@Model.Venue</span>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-center gap-3 my-3">
+                        <div class="text-center" style="width: 95px;">
+                            @if (!string.IsNullOrEmpty(Model.HomeTeamLogoUrl))
+                            {
+                                <img src="@Model.HomeTeamLogoUrl" width="45" height="45" style="object-fit: contain;">
+                            }
+                            else
+                            {
+                                <div class="mx-auto bg-dark text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 45px; height: 45px; font-size: 0.8rem;">T1</div>
+                            }
+                            <small class="d-block fw-bold text-muted mt-1 text-truncate" style="font-size: 0.7rem;">@(Model.Venue == "Home" ? "Real Madrid" : Model.Opponent)</small>
+                        </div>
+
+                        <span class="fw-bold text-muted fs-5">VS</span>
+
+                        <div class="text-center" style="width: 95px;">
+                            @if (!string.IsNullOrEmpty(Model.AwayTeamLogoUrl))
+                            {
+                                <img src="@Model.AwayTeamLogoUrl" width="45" height="45" style="object-fit: contain;">
+                            }
+                            else
+                            {
+                                <div class="mx-auto bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 45px; height: 45px; font-size: 0.8rem;">T2</div>
+                            }
+                            <small class="d-block fw-bold text-muted mt-1 text-truncate" style="font-size: 0.7rem;">@(Model.Venue == "Home" ? Model.Opponent : "Real Madrid")</small>
+                        </div>
+                    </div>
+
+                    <div class="small text-primary fw-semibold mt-1">@Model.Date.ToString("dd MMM yyyy - HH:mm")</div>
+                    <div class="small text-muted" style="font-size: 0.75rem;">@Model.Stadium</div>
+                </div>
+            }
+            else
+            {
+                <div class="text-center text-muted py-5">
+                    No upcoming matches scheduled at the moment.
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card h-100 border-0 shadow-sm p-4" style="background: #ffffff; border-radius: 12px;">
+            <h2 class="fw-bold mb-3" style="color: #0f1c3f;">Club Identity</h2>
+            <p class="text-secondary" style="font-size: 0.95rem; line-height: 1.6;">Real Madrid Club de Fútbol, founded in 1902, is one of the most successful football clubs globally. Universally recognized for its white kit, the club holds an unmatched heritage in professional sports.</p>
+            
+            <div class="row g-2 text-center mt-2">
+                <div class="col-4">
+                    <div class="p-2 border rounded bg-light">
+                        <small class="text-muted d-block text-uppercase" style="font-size: 0.65rem; font-weight: 600;">La Liga</small>
+                        <span class="fw-bold fs-5" style="color: #0f1c3f;">36🏆</span>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="p-2 border rounded bg-light">
+                        <small class="text-muted d-block text-uppercase" style="font-size: 0.65rem; font-weight: 600;">UCL</small>
+                        <span class="fw-bold fs-5" style="color: #0f1c3f;">15🏆</span>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="p-2 border rounded bg-light">
+                        <small class="text-muted d-block text-uppercase" style="font-size: 0.65rem; font-weight: 600;">Founded</small>
+                        <span class="fw-bold fs-5" style="color: #0f1c3f;">1902</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

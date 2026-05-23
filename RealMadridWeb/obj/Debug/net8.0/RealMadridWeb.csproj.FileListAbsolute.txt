@@ -109,3 +109,8 @@
 /Users/mitza/FACULTATE/AN 3 - SEM 2/DAW/Madridista-Hub/RealMadridWeb/obj/Debug/net8.0/RealMadridWeb.pdb
 /Users/mitza/FACULTATE/AN 3 - SEM 2/DAW/Madridista-Hub/RealMadridWeb/obj/Debug/net8.0/RealMadridWeb.genruntimeconfig.cache
 /Users/mitza/FACULTATE/AN 3 - SEM 2/DAW/Madridista-Hub/RealMadridWeb/obj/Debug/net8.0/ref/RealMadridWeb.dll
+/Users/mitza/FACULTATE/AN 3 - SEM 2/DAW/Madridista-Hub/RealMadridWeb/bin/Debug/net8.0/Microsoft.Extensions.Caching.Memory.dll
+/Users/mitza/FACULTATE/AN 3 - SEM 2/DAW/Madridista-Hub/RealMadridWeb/bin/Debug/net8.0/Microsoft.Extensions.DependencyInjection.dll
+/Users/mitza/FACULTATE/AN 3 - SEM 2/DAW/Madridista-Hub/RealMadridWeb/bin/Debug/net8.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll
+/Users/mitza/FACULTATE/AN 3 - SEM 2/DAW/Madridista-Hub/RealMadridWeb/bin/Debug/net8.0/Microsoft.Extensions.Logging.dll
+/Users/mitza/FACULTATE/AN 3 - SEM 2/DAW/Madridista-Hub/RealMadridWeb/bin/Debug/net8.0/Microsoft.Extensions.Logging.Abstractions.dll

@@ -4,14 +4,14 @@ namespace RealMadridWeb.Models
 {
     public class Sponsor
     {
-        [Key]
         public int Id { get; set; }
 
         [Required]
         public string Name { get; set; } = string.Empty;
 
-        public string Type { get; set; } = string.Empty; // e.g., Main Kit Sponsor, Global Partner
+        public string? LogoUrl { get; set; }
 
-        public virtual ICollection<TeamSponsor> TeamSponsors { get; set; } = new List<TeamSponsor>();
+        [Required]
+        public string Type { get; set; } = "Main Partner"; 
     }
 }

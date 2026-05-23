@@ -1,0 +1,78 @@
+@{
+    ViewData["Title"] = "Live Squad Stats";
+}
+
+<div class="my-4 text-center">
+    <h1>🚀 Real Madrid Live Performance Center</h1>
+    <p class="text-muted">This dashboard fetches data dynamically from <code class="bg-light p-1">/api/players</code> using asynchronous JavaScript Fetch API.</p>
+</div>
+
+<div class="d-flex justify-content-center my-4" id="loadingSpinner">
+    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+        <span class="visually-hidden">Loading performance data...</span>
+    </div>
+</div>
+
+<div id="errorMessage" class="alert alert-danger d-none" role="alert">
+    ❌ Failed to load live performance statistics. Please check if the API is online.
+</div>
+
+<div id="statsContainer" class="d-none">
+    <table class="table table-hover align-middle shadow-sm rounded">
+        <thead class="table-primary">
+            <tr>
+                <th>#</th>
+                <th>Player Name</th>
+                <th>Team</th>
+                <th>Position</th>
+                <th class="text-center">Goals</th>
+                <th class="text-center">Assists</th>
+            </tr>
+        </thead>
+        <tbody id="playersTableBody">
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const apiUrl = "/api/players";
+        const spinner = document.getElementById("loadingSpinner");
+        const container = document.getElementById("statsContainer");
+        const errorMsg = document.getElementById("errorMessage");
+        const tableBody = document.getElementById("playersTableBody");
+
+        fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then(data => {
+                spinner.classList.add("d-none");
+                container.classList.remove("d-none");
+
+                tableBody.innerHTML = "";
+
+                data.forEach(player => {
+                    const row = `
+                        <tr>
+                            <td><span class="badge bg-secondary p-2">#${player.shirtNumber}</span></td>
+                            <td><strong>${player.name}</strong></td>
+                            <td><span class="badge bg-light text-dark border">${player.teamName}</span></td>
+                            <td>${player.position}</td>
+                            <td class="text-center fw-bold text-success">${player.goals}</td>
+                            <td class="text-center fw-bold text-info">${player.assists}</td>
+                        </tr>
+                    `;
+                    tableBody.innerHTML += row;
+                });
+            })
+            .catch(error => {
+                console.error("Error fetching dynamic data:", error);
+                spinner.classList.add("d-none");
+                errorMsg.classList.remove("d-none");
+            });
+    });
+</script>

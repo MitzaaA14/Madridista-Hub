@@ -1,31 +1,43 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using RealMadridWeb.Data;
 using RealMadridWeb.Models;
+using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace RealMadridWeb.Controllers;
-
-public class HomeController : Controller
+namespace RealMadridWeb.Controllers
 {
-    private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
+    public class HomeController : Controller
     {
-        _logger = logger;
-    }
+        private readonly ApplicationDbContext _context;
 
-    public IActionResult Index()
-    {
-        return View();
-    }
+        public HomeController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
 
-    public IActionResult Privacy()
-    {
-        return View();
-    }
+        public async Task<IActionResult> Index()
+        {
+            var nextMatch = await _context.Matches
+                .Include(m => m.Team)
+                .Where(m => m.Date >= DateTime.Now)
+                .OrderBy(m => m.Date)
+                .FirstOrDefaultAsync();
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(nextMatch);
+        }
+
+        public IActionResult LiveStats()
+        {
+            return View();
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
     }
 }

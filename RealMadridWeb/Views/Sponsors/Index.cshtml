@@ -1,28 +1,53 @@
 @model IEnumerable<RealMadridWeb.Models.Sponsor>
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
 
 @{
-    ViewData["Title"] = "Sponsors";
+    ViewData["Title"] = "Official Partners";
 }
 
 <div class="d-flex justify-content-between align-items-center my-4">
-    <h1>Official Club Sponsors</h1>
-    <a asp-action="Create" class="btn btn-primary">Add New Sponsor</a>
+    <h1 class="fw-bold" style="color: #0f1c3f;">Official Sponsors & Partners</h1>
+    @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+    {
+        <a asp-action="Create" class="btn btn-primary">+ Add New Sponsor</a>
+    }
 </div>
 
-<table class="table table-striped table-hover">
-    <thead class="table-dark">
-        <tr>
-            <th>Sponsor Name</th>
-            <th>Partnership Type</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td><strong>@item.Name</strong></td>
-                <td>@item.Type</td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4 text-center">
+    @foreach (var sponsor in Model)
+    {
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm p-4 d-flex flex-column align-items-center justify-content-between overflow-hidden" style="border-radius: 12px; background: #ffffff; min-height: 200px;">
+                
+                <div class="mb-2">
+                    <span class="badge bg-light text-secondary border text-uppercase" style="font-size: 0.6rem; letter-spacing: 0.5px;">@sponsor.Type</span>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-center flex-grow-1 my-3" style="height: 80px; width: 100%;">
+                    @if (!string.IsNullOrEmpty(sponsor.LogoUrl))
+                    {
+                        <img src="@sponsor.LogoUrl" style="max-height: 70px; max-width: 100%; object-fit: contain;" alt="@sponsor.Name">
+                    }
+                    else
+                    {
+                        <div class="fw-bold text-muted fs-5 text-uppercase">@sponsor.Name</div>
+                    }
+                </div>
+
+                <div class="w-100 mt-2">
+                    <h6 class="fw-bold text-dark m-0">@sponsor.Name</h6>
+                    
+                    @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                    {
+                        <div class="d-flex gap-1 justify-content-center mt-3 pt-2 border-top">
+                            <a asp-action="Edit" asp-route-id="@sponsor.Id" class="btn btn-sm btn-link text-secondary text-decoration-none fw-bold p-0 me-2" style="font-size: 0.75rem;">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@sponsor.Id" class="btn btn-sm btn-link text-danger text-decoration-none fw-bold p-0" style="font-size: 0.75rem;">Remove</a>
+                        </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+    }
+</div>

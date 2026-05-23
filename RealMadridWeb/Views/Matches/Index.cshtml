@@ -1,30 +1,83 @@
 @model IEnumerable<RealMadridWeb.Models.Match>
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
 
 @{
-    ViewData["Title"] = "Matches";
+    ViewData["Title"] = "Schedule & Results";
 }
 
 <div class="d-flex justify-content-between align-items-center my-4">
-    <h1>Match Fixtures & Results</h1>
-    <a asp-action="Create" class="btn btn-primary">Log New Match</a>
+    <h1 class="fw-bold" style="color: #0f1c3f;">Fixtures & Results</h1>
+    @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+    {
+        <a asp-action="Create" class="btn btn-primary">+ Add New Match</a>
+    }
 </div>
 
-<table class="table table-striped table-hover">
-    <thead class="table-dark">
-        <tr>
-            <th>Opponent</th>
-            <th>Date</th>
-            <th>Stadium</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td><strong>vs @item.Opponent</strong></td>
-                <td>@item.Date.ToString("yyyy-MM-dd HH:mm")</td>
-                <td>@item.Stadium</td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    @foreach (var match in Model)
+    {
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm overflow-hidden" style="border-radius: 15px; background: #ffffff;">
+                <div class="p-4 text-center bg-light border-bottom">
+                    <div class="d-flex justify-content-center gap-1 mb-3">
+                        <span class="badge bg-primary text-uppercase px-2 py-1" style="font-size: 0.65rem;">@(match.Team?.Name ?? "Real Madrid")</span>
+                        <span class="badge bg-dark text-uppercase px-2 py-1" style="font-size: 0.65rem;">@match.League</span>
+                        <span class="badge bg-secondary text-uppercase px-2 py-1" style="font-size: 0.65rem;">@match.Venue</span>
+                    </div>
+                    
+                    <div class="d-flex align-items-center justify-content-center gap-3">
+                        <div class="text-center" style="width: 100px;">
+                            @if (!string.IsNullOrEmpty(match.HomeTeamLogoUrl))
+                            {
+                                <img src="@match.HomeTeamLogoUrl" width="50" height="50" style="object-fit: contain;">
+                            }
+                            else
+                            {
+                                <div class="mx-auto bg-dark text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 50px; height: 50px;">T1</div>
+                            }
+                            <small class="d-block fw-bold text-dark mt-1 text-truncate" style="font-size: 0.75rem;">@(match.Venue == "Home" ? "Real Madrid" : match.Opponent)</small>
+                        </div>
+
+                        @if (match.IsFinished)
+                        {
+                            <div class="px-2">
+                                <span class="fw-extrabold fs-3 text-dark d-block">@match.HomeScore - @match.AwayScore</span>
+                                <span class="badge bg-secondary text-uppercase" style="font-size: 0.55rem;">FT</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <span class="fw-bold text-muted px-2 fs-5">VS</span>
+                        }
+
+                        <div class="text-center" style="width: 100px;">
+                            @if (!string.IsNullOrEmpty(match.AwayTeamLogoUrl))
+                            {
+                                <img src="@match.AwayTeamLogoUrl" width="50" height="50" style="object-fit: contain;">
+                            }
+                            else
+                            {
+                                <div class="mx-auto bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 50px; height: 50px;">T2</div>
+                            }
+                            <small class="d-block fw-bold text-dark mt-1 text-truncate" style="font-size: 0.75rem;">@(match.Venue == "Home" ? match.Opponent : "Real Madrid")</small>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 pt-2 border-top text-secondary small">
+                        <div class="fw-semibold text-dark">@match.Date.ToString("dd MMM yyyy - HH:mm")</div>
+                        <div class="text-muted mt-1" style="font-size: 0.75rem;">@match.Stadium</div>
+                    </div>
+                </div>
+                
+                @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                {
+                    <div class="card-footer bg-white border-0 d-flex justify-content-around py-3">
+                        <a asp-action="Edit" asp-route-id="@match.Id" class="btn btn-sm btn-outline-secondary px-3" style="border-radius: 6px; font-weight: 600;">Edit / Score</a>
+                        <a asp-action="Delete" asp-route-id="@match.Id" class="btn btn-sm btn-outline-danger px-3" style="border-radius: 6px; font-weight: 600;">Remove</a>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

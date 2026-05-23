@@ -1,36 +1,88 @@
 @model IEnumerable<RealMadridWeb.Models.Player>
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
 
 @{
-    ViewData["Title"] = "Real Madrid Squad";
+    ViewData["Title"] = "Official Squad";
+
+    var selectedTeamId = Context.Request.Query["teamId"].ToString();
+    
+    var filteredPlayers = !string.IsNullOrEmpty(selectedTeamId) 
+        ? Model.Where(p => p.TeamId == int.Parse(selectedTeamId)) 
+        : Model;
+
+    // AICI ESTE REPARAȚIA: Verificăm absolut toate variantele de denumiri pentru echipa de fete
+    var female = filteredPlayers.Where(p => p.Team != null && 
+        (p.Team.Name.Contains("Female", StringComparison.OrdinalIgnoreCase) || 
+         p.Team.Name.Contains("Women", StringComparison.OrdinalIgnoreCase) || 
+         p.Team.Name.Contains("Femenino", StringComparison.OrdinalIgnoreCase) ||
+         p.Team.Name.Contains("Girls", StringComparison.OrdinalIgnoreCase)));
+
+    // Verificăm variantele pentru echipa de tineret / academie
+    var academy = filteredPlayers.Where(p => p.Team != null && 
+        (p.Team.Name.Contains("Academy", StringComparison.OrdinalIgnoreCase) || 
+         p.Team.Name.Contains("Castilla", StringComparison.OrdinalIgnoreCase) || 
+         p.Team.Name.Contains("Juvenil", StringComparison.OrdinalIgnoreCase) || 
+         p.Team.Name.Contains("B Team", StringComparison.OrdinalIgnoreCase)));
+
+    // Tot ce a rămas și nu este nici la fete, nici la academie, merge la prima echipă (First Team)
+    var firstTeam = filteredPlayers.Where(p => p.Team == null || 
+        (!academy.Any(a => a.Id == p.Id) && !female.Any(f => f.Id == p.Id)));
 }
 
 <div class="d-flex justify-content-between align-items-center my-4">
-    <h1>Official Squad - Real Madrid</h1>
-    <a asp-action="Create" class="btn btn-primary">Add New Player</a>
+    <h1 class="fw-bold" style="color: #0f1c3f;">Real Madrid Squad</h1>
+    @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+    {
+        <a asp-action="Create" class="btn btn-primary">+ Add New Player</a>
+    }
 </div>
 
-<table class="table table-striped table-hover">
-    <thead class="table-dark">
-        <tr>
-            <th>Number</th>
-            <th>Name</th>
-            <th>Team</th>
-            <th>Position</th>
-            <th>Goals</th>
-            <th>Assists</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var player in Model)
-        {
-            <tr>
-                <td><strong>#@player.ShirtNumber</strong></td>
-                <td>@player.Name</td>
-                <td>@(player.Team != null ? player.Team.Name : "No Team")</td>
-                <td>@player.Position</td>
-                <td>@player.Goals</td>
-                <td>@player.Assists</td>
-            </tr>
-        }
-    </tbody>
-</table>
+@if (!string.IsNullOrEmpty(selectedTeamId))
+{
+    <div class="mb-4">
+        <a asp-controller="Teams" asp-action="Index" class="btn btn-sm btn-outline-secondary px-3 py-2 fw-semibold" style="border-radius: 8px;">&larr; Back to Teams</a>
+    </div>
+}
+
+<ul class="nav nav-pills mb-4 justify-content-center" id="squadTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active px-4 fw-semibold" id="first-team-tab" data-bs-toggle="tab" data-bs-target="#first-team" type="button" role="tab">First Team</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link px-4 fw-semibold" id="academy-tab" data-bs-toggle="tab" data-bs-target="#academy" type="button" role="tab">Castilla / Academy</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link px-4 fw-semibold" id="female-tab" data-bs-toggle="tab" data-bs-target="#female" type="button" role="tab">Women's Team</button>
+    </li>
+</ul>
+
+<div class="tab-content" id="squadTabsContent">
+    <div class="tab-pane fade show active" id="first-team" role="tabpanel">
+        @await Html.PartialAsync("_SquadGrid", firstTeam)
+    </div>
+    <div class="tab-pane fade" id="academy" role="tabpanel">
+        @await Html.PartialAsync("_SquadGrid", academy)
+    </div>
+    <div class="tab-pane fade" id="female" role="tabpanel">
+        @await Html.PartialAsync("_SquadGrid", female)
+    </div>
+</div>
+
+<style>
+    .nav-pills .nav-link {
+        color: #0f1c3f;
+        border: 1px solid #0f1c3f;
+        margin: 0 5px;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+    .nav-pills .nav-link.active {
+        background-color: #0f1c3f !important;
+        color: #ffffff !important;
+        border-color: #0f1c3f;
+    }
+    .nav-pills .nav-link:hover:not(.active) {
+        background-color: rgba(15, 28, 63, 0.05);
+    }
+</style>

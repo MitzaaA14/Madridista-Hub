@@ -13,6 +13,10 @@
       "PackagePath": "staticwebassets/favicon.ico"
     },
     {
+      "Id": "/Users/mitza/FACULTATE/AN 3 - SEM 2/DAW/Madridista-Hub/RealMadridWeb/wwwroot/images/logo.png",
+      "PackagePath": "staticwebassets/images/logo.png"
+    },
+    {
       "Id": "/Users/mitza/FACULTATE/AN 3 - SEM 2/DAW/Madridista-Hub/RealMadridWeb/wwwroot/js/site.js",
       "PackagePath": "staticwebassets/js/site.js"
     },

@@ -1,0 +1,20 @@
+@model RealMadridWeb.Models.Player
+
+@{
+    ViewData["Title"] = "Delete Player";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6 card p-5 shadow-sm my-5 border-0 rounded-3 text-center" style="background: #ffffff;">
+        <h2 class="fw-bold text-danger mb-3">Delete Player</h2>
+        <p class="text-secondary mb-4">Are you sure you want to permanently remove <strong>@Model.Name</strong> from the system?</p>
+        
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="Id" />
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-danger w-100 py-2" style="border-radius: 8px;">Delete Permanently</button>
+                <a asp-action="Index" class="btn btn-outline-secondary w-100 py-2" style="border-radius: 8px;">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

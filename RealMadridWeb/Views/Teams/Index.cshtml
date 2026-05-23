@@ -1,28 +1,58 @@
 @model IEnumerable<RealMadridWeb.Models.Team>
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
 
 @{
-    ViewData["Title"] = "Teams Management";
+    ViewData["Title"] = "Club Teams";
 }
 
 <div class="d-flex justify-content-between align-items-center my-4">
-    <h1>Club Teams</h1>
-    <a asp-action="Create" class="btn btn-primary">Add New Team</a>
+    <h1 class="fw-bold" style="color: #0f1c3f;">Club Departments & Teams</h1>
+    @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+    {
+        <a asp-action="Create" class="btn btn-primary">+ Add New Team</a>
+    }
 </div>
 
-<table class="table table-striped table-hover">
-    <thead class="table-dark">
-        <tr>
-            <th>Team Name</th>
-            <th>League</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var team in Model)
-        {
-            <tr>
-                <td>@team.Name</td>
-                <td>@team.League</td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    @foreach (var team in Model)
+    {
+        <div class="col">
+            <div class="card h-100 border-0 shadow overflow-hidden group" style="border-radius: 16px;">
+                
+                <div class="position-relative" style="height: 220px;">
+                    <div class="position-absolute top-0 start-0 w-100 h-100" style="z-index: 1;">
+                        @if (!string.IsNullOrEmpty(team.ImageUrl))
+                        {
+                            <img src="@team.ImageUrl" class="w-100 h-100" style="object-fit: cover; transition: transform 0.3s ease;" alt="@team.Name">
+                        }
+                        else
+                        {
+                            <div class="w-100 h-100" style="background: linear-gradient(135deg, #0f1c3f 0%, #1a2e63 100%);"></div>
+                        }
+                        <div class="position-absolute top-0 start-0 w-100 h-100" style="background: rgba(15, 28, 63, 0.65);"></div>
+                    </div>
+
+                    <a asp-controller="Players" asp-action="Index" asp-route-teamId="@team.Id" class="position-relative d-flex flex-column justify-content-end p-4 text-decoration-none" style="z-index: 2; height: 100%; width: 100%;">
+                        <h3 class="fw-bold text-white text-uppercase m-0" style="letter-spacing: 1px;">@team.Name</h3>
+                        <p class="text-warning small fw-bold m-0 mt-1 text-uppercase" style="letter-spacing: 0.5px;">Click to view roster &rarr;</p>
+                    </a>
+                </div>
+
+                @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                {
+                    <div class="card-footer bg-white border-0 d-flex justify-content-around py-3" style="z-index: 3;">
+                        <a asp-action="Edit" asp-route-id="@team.Id" class="btn btn-sm btn-outline-secondary px-4 fw-bold" style="border-radius: 6px;">Edit Team</a>
+                        <a asp-action="Delete" asp-route-id="@team.Id" class="btn btn-sm btn-outline-danger px-4 fw-bold" style="border-radius: 6px;">Remove</a>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .card:hover img {
+        transform: scale(1.05);
+    }
+</style>

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RealMadridWeb")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ac2dd18669d67405408ccfa39691c3ab2f812040")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ab6848a50ed33bb8b30412e8f1acedc078bc5cc4")]
 [assembly: System.Reflection.AssemblyProductAttribute("RealMadridWeb")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RealMadridWeb")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

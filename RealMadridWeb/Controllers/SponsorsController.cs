@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RealMadridWeb.Data;
 using RealMadridWeb.Models;
+using System.Threading.Tasks;
 
 namespace RealMadridWeb.Controllers
 {
@@ -16,10 +17,10 @@ namespace RealMadridWeb.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var sponsors = await _context.Sponsors.ToListAsync();
-            return View(sponsors);
+            return View(await _context.Sponsors.ToListAsync());
         }
 
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
@@ -27,7 +28,7 @@ namespace RealMadridWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Type")] Sponsor sponsor)
+        public async Task<IActionResult> Create([Bind("Id,Name,LogoUrl,Type")] Sponsor sponsor)
         {
             if (ModelState.IsValid)
             {
@@ -36,6 +37,70 @@ namespace RealMadridWeb.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(sponsor);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var sponsor = await _context.Sponsors.FindAsync(id);
+            if (sponsor == null) return NotFound();
+
+            return View(sponsor);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,LogoUrl,Type")] Sponsor sponsor)
+        {
+            if (id != sponsor.Id) return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(sponsor);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!SponsorExists(sponsor.Id)) return NotFound();
+                    else throw;
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(sponsor);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var sponsor = await _context.Sponsors.FirstOrDefaultAsync(m => m.Id == id);
+            if (sponsor == null) return NotFound();
+
+            return View(sponsor);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var sponsor = await _context.Sponsors.FindAsync(id);
+            if (sponsor != null)
+            {
+                _context.Sponsors.Remove(sponsor);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool SponsorExists(int id)
+        {
+            return _context.Sponsors.Any(e => e.Id == id);
         }
     }
 }

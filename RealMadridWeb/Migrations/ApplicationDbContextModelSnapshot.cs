@@ -17,7 +17,7 @@ namespace RealMadridWeb.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.4")
+                .HasAnnotation("ProductVersion", "8.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -226,8 +226,27 @@ namespace RealMadridWeb.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("AwayScore")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("AwayTeamLogoUrl")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int?>("HomeScore")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("HomeTeamLogoUrl")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsFinished")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("League")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Opponent")
                         .IsRequired()
@@ -237,7 +256,16 @@ namespace RealMadridWeb.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("TeamId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Venue")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("TeamId");
 
                     b.ToTable("Matches");
                 });
@@ -256,13 +284,18 @@ namespace RealMadridWeb.Migrations
                     b.Property<int>("Goals")
                         .HasColumnType("integer");
 
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Position")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<int>("ShirtNumber")
                         .HasColumnType("integer");
@@ -314,6 +347,9 @@ namespace RealMadridWeb.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("LogoUrl")
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -335,6 +371,9 @@ namespace RealMadridWeb.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -343,7 +382,7 @@ namespace RealMadridWeb.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("TeamId")
+                    b.Property<int?>("TeamId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -361,8 +400,7 @@ namespace RealMadridWeb.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("League")
-                        .IsRequired()
+                    b.Property<string>("ImageUrl")
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
@@ -448,6 +486,17 @@ namespace RealMadridWeb.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("RealMadridWeb.Models.Match", b =>
+                {
+                    b.HasOne("RealMadridWeb.Models.Team", "Team")
+                        .WithMany()
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Team");
+                });
+
             modelBuilder.Entity("RealMadridWeb.Models.Player", b =>
                 {
                     b.HasOne("RealMadridWeb.Models.Team", "Team")
@@ -462,13 +511,13 @@ namespace RealMadridWeb.Migrations
             modelBuilder.Entity("RealMadridWeb.Models.PlayerMatch", b =>
                 {
                     b.HasOne("RealMadridWeb.Models.Match", "Match")
-                        .WithMany("PlayerMatches")
+                        .WithMany()
                         .HasForeignKey("MatchId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("RealMadridWeb.Models.Player", "Player")
-                        .WithMany("PlayerMatches")
+                        .WithMany()
                         .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -482,9 +531,7 @@ namespace RealMadridWeb.Migrations
                 {
                     b.HasOne("RealMadridWeb.Models.Team", "Team")
                         .WithMany("StaffMembers")
-                        .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TeamId");
 
                     b.Navigation("Team");
                 });
@@ -492,13 +539,13 @@ namespace RealMadridWeb.Migrations
             modelBuilder.Entity("RealMadridWeb.Models.TeamSponsor", b =>
                 {
                     b.HasOne("RealMadridWeb.Models.Sponsor", "Sponsor")
-                        .WithMany("TeamSponsors")
+                        .WithMany()
                         .HasForeignKey("SponsorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("RealMadridWeb.Models.Team", "Team")
-                        .WithMany("TeamSponsors")
+                        .WithMany()
                         .HasForeignKey("TeamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -508,28 +555,11 @@ namespace RealMadridWeb.Migrations
                     b.Navigation("Team");
                 });
 
-            modelBuilder.Entity("RealMadridWeb.Models.Match", b =>
-                {
-                    b.Navigation("PlayerMatches");
-                });
-
-            modelBuilder.Entity("RealMadridWeb.Models.Player", b =>
-                {
-                    b.Navigation("PlayerMatches");
-                });
-
-            modelBuilder.Entity("RealMadridWeb.Models.Sponsor", b =>
-                {
-                    b.Navigation("TeamSponsors");
-                });
-
             modelBuilder.Entity("RealMadridWeb.Models.Team", b =>
                 {
                     b.Navigation("Players");
 
                     b.Navigation("StaffMembers");
-
-                    b.Navigation("TeamSponsors");
                 });
 #pragma warning restore 612, 618
         }

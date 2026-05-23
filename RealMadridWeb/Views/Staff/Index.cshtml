@@ -1,30 +1,51 @@
 @model IEnumerable<RealMadridWeb.Models.Staff>
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
 
 @{
-    ViewData["Title"] = "Staff Management";
+    ViewData["Title"] = "Technical Staff";
 }
 
 <div class="d-flex justify-content-between align-items-center my-4">
-    <h1>Club Staff Members</h1>
-    <a asp-action="Create" class="btn btn-primary">Add New Staff</a>
+    <h1 class="fw-bold" style="color: #0f1c3f;">Technical & Management Staff</h1>
+    @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+    {
+        <a asp-action="Create" class="btn btn-primary">+ Add Staff Member</a>
+    }
 </div>
 
-<table class="table table-striped table-hover">
-    <thead class="table-dark">
-        <tr>
-            <th>Name</th>
-            <th>Role</th>
-            <th>Assigned Team</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Name</td>
-                <td>@item.Role</td>
-                <td>@(item.Team != null ? item.Team.Name : "No Team")</td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+    @foreach (var member in Model)
+    {
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm text-center p-3" style="border-radius: 15px; background: #ffffff;">
+                @* Avatar circular: Poză reală SAU Inițială text *@
+                <div class="mx-auto mt-3 overflow-hidden rounded-circle border border-2 border-warning shadow-sm" style="width: 110px; height: 110px; background: #f8f9fa;">
+                    @if (!string.IsNullOrEmpty(member.ImageUrl))
+                    {
+                        <img src="@member.ImageUrl" class="w-100 h-100" style="object-fit: cover; object-position: top;">
+                    }
+                    else
+                    {
+                        <div class="w-100 h-100 d-flex align-items-center justify-content-center fw-bold text-uppercase text-secondary fs-3" style="background: #e9ecef;">
+                            @member.Name.Substring(0, 1)
+                        </div>
+                    }
+                </div>
+                
+                <div class="card-body">
+                    <h5 class="fw-bold mb-1 text-uppercase text-truncate" style="color: #0f1c3f;">@member.Name</h5>
+                    <p class="small text-uppercase fw-bold text-warning mb-0" style="font-size: 0.75rem; letter-spacing: 0.5px;">@member.Role</p>
+                </div>
+                
+                @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                {
+                    <div class="card-footer bg-white border-0 d-flex justify-content-around pb-2 pt-0">
+                        <a asp-action="Edit" asp-route-id="@member.Id" class="btn btn-sm btn-outline-secondary px-3" style="border-radius: 6px; font-weight: 600;">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@member.Id" class="btn btn-sm btn-outline-danger px-3" style="border-radius: 6px; font-weight: 600;">Remove</a>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

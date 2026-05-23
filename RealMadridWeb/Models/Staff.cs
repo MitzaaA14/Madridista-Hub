@@ -4,17 +4,18 @@ namespace RealMadridWeb.Models
 {
     public class Staff
     {
-        [Key]
         public int Id { get; set; }
 
         [Required]
         public string Name { get; set; } = string.Empty;
 
-        [Required]
-        public string Role { get; set; } = string.Empty; // e.g., Manager, Assistant Coach, Physio
+        // Câmpul opțional pentru poza de profil a antrenorului/staff-ului
+        public string? ImageUrl { get; set; }
 
         [Required]
-        public int TeamId { get; set; }
-        public virtual Team? Team { get; set; }
+        public string Role { get; set; } = string.Empty;
+
+        public int? TeamId { get; set; }
+        public Team? Team { get; set; }
     }
 }

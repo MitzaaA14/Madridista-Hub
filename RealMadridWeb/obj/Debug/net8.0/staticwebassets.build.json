@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "wRzWx4YccP0p+R3N0qTooc5Q2wV/xXGmblbKkTAhS2M=",
+  "Hash": "5hOR1HIAgmAfiGItVhiB2SVJC5eFC7U0BohPhUh/Mjc=",
   "Source": "RealMadridWeb",
   "BasePath": "_content/RealMadridWeb",
   "Mode": "Default",
@@ -91,6 +91,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/favicon.ico"
+    },
+    {
+      "Identity": "/Users/mitza/FACULTATE/AN 3 - SEM 2/DAW/Madridista-Hub/RealMadridWeb/wwwroot/images/logo.png",
+      "SourceId": "RealMadridWeb",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/mitza/FACULTATE/AN 3 - SEM 2/DAW/Madridista-Hub/RealMadridWeb/wwwroot/",
+      "BasePath": "_content/RealMadridWeb",
+      "RelativePath": "images/logo.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/images/logo.png"
     },
     {
       "Identity": "/Users/mitza/FACULTATE/AN 3 - SEM 2/DAW/Madridista-Hub/RealMadridWeb/wwwroot/js/site.js",

@@ -1,0 +1,94 @@
+@model RealMadridWeb.Models.Match
+
+@{
+    ViewData["Title"] = "Edit Match";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6 card p-4 shadow-sm my-5 border-0 rounded-3" style="background: #ffffff;">
+        <h2 class="fw-bold mb-4" style="color: #0f1c3f;">Edit Match Details</h2>
+        
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <input type="hidden" asp-for="Id" />
+
+            <div class="form-group mb-3">
+                <label asp-for="TeamId" class="form-label fw-semibold text-secondary">Our Club Squad</label>
+                <select asp-for="TeamId" class="form-control" asp-items="ViewBag.TeamId" style="border-radius: 8px;"></select>
+                <span asp-validation-for="TeamId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Venue" class="form-label fw-semibold text-secondary">Match Location Type</label>
+                <select asp-for="Venue" class="form-control" style="border-radius: 8px;">
+                    <option value="Home">Home (Real Madrid is Host)</option>
+                    <option value="Away">Away (Real Madrid is Guest)</option>
+                </select>
+                <span asp-validation-for="Venue" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Opponent" class="form-label fw-semibold text-secondary">Opponent Name</label>
+                <input asp-for="Opponent" class="form-control" style="border-radius: 8px;" />
+                <span asp-validation-for="Opponent" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="League" class="form-label fw-semibold text-secondary">League / Competition</label>
+                <input asp-for="League" class="form-control" style="border-radius: 8px;" />
+                <span asp-validation-for="League" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Stadium" class="form-label fw-semibold text-secondary">Stadium</label>
+                <input asp-for="Stadium" class="form-control" style="border-radius: 8px;" />
+                <span asp-validation-for="Stadium" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Date" class="form-label fw-semibold text-secondary">Date & Time</label>
+                <input asp-for="Date" type="datetime-local" class="form-control" style="border-radius: 8px;" value="@Model.Date.ToString("yyyy-MM-ddTHH:mm")" />
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="HomeTeamLogoUrl" class="form-label fw-semibold text-secondary">Left Team Logo URL</label>
+                <input asp-for="HomeTeamLogoUrl" class="form-control" style="border-radius: 8px;" />
+                <span asp-validation-for="HomeTeamLogoUrl" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="AwayTeamLogoUrl" class="form-label fw-semibold text-secondary">Right Team Logo URL</label>
+                <input asp-for="AwayTeamLogoUrl" class="form-control" style="border-radius: 8px;" />
+                <span asp-validation-for="AwayTeamLogoUrl" class="text-danger"></span>
+            </div>
+
+            <hr class="my-4">
+            <h5 class="fw-bold mb-3 text-primary">Match Result (For Played Matches)</h5>
+
+            <div class="form-check form-switch mb-1">
+                <input asp-for="IsFinished" type="checkbox" class="form-check-input" id="IsFinishedSwitch" style="cursor: pointer;" />
+                <label class="form-check-label fw-semibold text-dark" for="IsFinishedSwitch">Match is Finished</label>
+            </div>
+            <div class="mb-3">
+                <span asp-validation-for="IsFinished" class="text-danger small"></span>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-6">
+                    <label asp-for="HomeScore" class="form-label small fw-semibold text-secondary">Left Team Goals</label>
+                    <input asp-for="HomeScore" type="number" min="0" class="form-control" style="border-radius: 8px;" />
+                </div>
+                <div class="col-6">
+                    <label asp-for="AwayScore" class="form-label small fw-semibold text-secondary">Right Team Goals</label>
+                    <input asp-for="AwayScore" type="number" min="0" class="form-control" style="border-radius: 8px;" />
+                </div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary w-100 py-2">Save Changes</button>
+                <a asp-action="Index" class="btn btn-outline-secondary w-100 py-2" style="border-radius: 8px;">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
