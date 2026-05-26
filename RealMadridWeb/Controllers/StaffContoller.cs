@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -15,24 +16,23 @@ namespace RealMadridWeb.Controllers
             _context = context;
         }
 
-        // GET: Staff
         public async Task<IActionResult> Index()
         {
             var staff = _context.Staff.Include(s => s.Team);
             return View(await staff.ToListAsync());
         }
 
-        // GET: Staff/Create
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             ViewData["TeamId"] = new SelectList(_context.Teams, "Id", "Name");
             return View();
         }
 
-        // POST: Staff/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("Id,Name,ImageUrl,Role,TeamId")] Staff staff)
         {
             if (ModelState.IsValid)
@@ -45,8 +45,8 @@ namespace RealMadridWeb.Controllers
             return View(staff);
         }
 
-        // GET: Staff/Edit/5
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -58,9 +58,9 @@ namespace RealMadridWeb.Controllers
             return View(staff);
         }
 
-        // POST: Staff/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ImageUrl,Role,TeamId")] Staff staff)
         {
             if (id != staff.Id) return NotFound();
@@ -83,8 +83,8 @@ namespace RealMadridWeb.Controllers
             return View(staff);
         }
 
-        // GET: Staff/Delete/5
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -97,9 +97,9 @@ namespace RealMadridWeb.Controllers
             return View(staff);
         }
 
-        // POST: Staff/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var staff = await _context.Staff.FindAsync(id);
@@ -107,7 +107,6 @@ namespace RealMadridWeb.Controllers
             {
                 _context.Staff.Remove(staff);
             }
-
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Madridista Hub</title>
     
-    <link rel="icon" type="image/png" href="/images/logo.png?v=3" sizes="32x32" />
+    <link rel="icon" type="image/png" href="~/images/logo2.png?v=3" sizes="32x32" />
     
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -88,7 +88,7 @@
                         @if (SignInManager.IsSignedIn(User))
                         {
                             <li class="nav-item">
-                                <span class="nav-link text-white fw-bold me-3">@User.Identity?.Name</span>
+                                <a class="nav-link text-white fw-bold me-2" asp-controller="Profile" asp-action="Index">👤 @User.Identity?.Name</a>
                             </li>
                             <li class="nav-item">
                                 <form asp-controller="Account" asp-action="Logout" method="post" class="form-inline">

@@ -218,6 +218,34 @@ namespace RealMadridWeb.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("RealMadridWeb.Models.FavoritePlayer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("AddedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("PlayerId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlayerId");
+
+                    b.HasIndex("UserId", "PlayerId")
+                        .IsUnique();
+
+                    b.ToTable("FavoritePlayers");
+                });
+
             modelBuilder.Entity("RealMadridWeb.Models.Match", b =>
                 {
                     b.Property<int>("Id")
@@ -268,6 +296,38 @@ namespace RealMadridWeb.Migrations
                     b.HasIndex("TeamId");
 
                     b.ToTable("Matches");
+                });
+
+            modelBuilder.Entity("RealMadridWeb.Models.MatchComment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("MatchId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MatchId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("MatchComments");
                 });
 
             modelBuilder.Entity("RealMadridWeb.Models.Player", b =>
@@ -435,6 +495,34 @@ namespace RealMadridWeb.Migrations
                     b.ToTable("TeamSponsors");
                 });
 
+            modelBuilder.Entity("RealMadridWeb.Models.WatchlistMatch", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("AddedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("MatchId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MatchId");
+
+                    b.HasIndex("UserId", "MatchId")
+                        .IsUnique();
+
+                    b.ToTable("WatchlistMatches");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -486,6 +574,25 @@ namespace RealMadridWeb.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("RealMadridWeb.Models.FavoritePlayer", b =>
+                {
+                    b.HasOne("RealMadridWeb.Models.Player", "Player")
+                        .WithMany()
+                        .HasForeignKey("PlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Player");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("RealMadridWeb.Models.Match", b =>
                 {
                     b.HasOne("RealMadridWeb.Models.Team", "Team")
@@ -495,6 +602,25 @@ namespace RealMadridWeb.Migrations
                         .IsRequired();
 
                     b.Navigation("Team");
+                });
+
+            modelBuilder.Entity("RealMadridWeb.Models.MatchComment", b =>
+                {
+                    b.HasOne("RealMadridWeb.Models.Match", "Match")
+                        .WithMany()
+                        .HasForeignKey("MatchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Match");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("RealMadridWeb.Models.Player", b =>
@@ -553,6 +679,25 @@ namespace RealMadridWeb.Migrations
                     b.Navigation("Sponsor");
 
                     b.Navigation("Team");
+                });
+
+            modelBuilder.Entity("RealMadridWeb.Models.WatchlistMatch", b =>
+                {
+                    b.HasOne("RealMadridWeb.Models.Match", "Match")
+                        .WithMany()
+                        .HasForeignKey("MatchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Match");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("RealMadridWeb.Models.Team", b =>

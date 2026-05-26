@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RealMadridWeb.Data;
@@ -21,6 +22,7 @@ namespace RealMadridWeb.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -28,6 +30,7 @@ namespace RealMadridWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("Id,Name,LogoUrl,Type")] Sponsor sponsor)
         {
             if (ModelState.IsValid)
@@ -40,6 +43,7 @@ namespace RealMadridWeb.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -52,6 +56,7 @@ namespace RealMadridWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,LogoUrl,Type")] Sponsor sponsor)
         {
             if (id != sponsor.Id) return NotFound();
@@ -74,6 +79,7 @@ namespace RealMadridWeb.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -86,6 +92,7 @@ namespace RealMadridWeb.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var sponsor = await _context.Sponsors.FindAsync(id);
@@ -93,7 +100,6 @@ namespace RealMadridWeb.Controllers
             {
                 _context.Sponsors.Remove(sponsor);
             }
-
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RealMadridWeb.Data;
@@ -14,22 +15,21 @@ namespace RealMadridWeb.Controllers
             _context = context;
         }
 
-        // GET: Teams
         public async Task<IActionResult> Index()
         {
             return View(await _context.Teams.ToListAsync());
         }
 
-        // GET: Teams/Create
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Teams/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("Id,Name,ImageUrl")] Team team)
         {
             if (ModelState.IsValid)
@@ -41,8 +41,8 @@ namespace RealMadridWeb.Controllers
             return View(team);
         }
 
-        // GET: Teams/Edit/5
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -53,9 +53,9 @@ namespace RealMadridWeb.Controllers
             return View(team);
         }
 
-        // POST: Teams/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ImageUrl")] Team team)
         {
             if (id != team.Id) return NotFound();
@@ -77,22 +77,21 @@ namespace RealMadridWeb.Controllers
             return View(team);
         }
 
-        // GET: Teams/Delete/5
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
 
-            var team = await _context.Teams
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var team = await _context.Teams.FirstOrDefaultAsync(m => m.Id == id);
             if (team == null) return NotFound();
 
             return View(team);
         }
 
-        // POST: Teams/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var team = await _context.Teams.FindAsync(id);
@@ -100,7 +99,6 @@ namespace RealMadridWeb.Controllers
             {
                 _context.Teams.Remove(team);
             }
-
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

@@ -6,28 +6,27 @@
     ViewData["Title"] = "Official Squad";
 
     var selectedTeamId = Context.Request.Query["teamId"].ToString();
-    
-    var filteredPlayers = !string.IsNullOrEmpty(selectedTeamId) 
-        ? Model.Where(p => p.TeamId == int.Parse(selectedTeamId)) 
+
+    var filteredPlayers = !string.IsNullOrEmpty(selectedTeamId)
+        ? Model.Where(p => p.TeamId == int.Parse(selectedTeamId))
         : Model;
 
-    // AICI ESTE REPARAȚIA: Verificăm absolut toate variantele de denumiri pentru echipa de fete
-    var female = filteredPlayers.Where(p => p.Team != null && 
-        (p.Team.Name.Contains("Female", StringComparison.OrdinalIgnoreCase) || 
-         p.Team.Name.Contains("Women", StringComparison.OrdinalIgnoreCase) || 
+    var female = filteredPlayers.Where(p => p.Team != null &&
+        (p.Team.Name.Contains("Female", StringComparison.OrdinalIgnoreCase) ||
+         p.Team.Name.Contains("Women", StringComparison.OrdinalIgnoreCase) ||
          p.Team.Name.Contains("Femenino", StringComparison.OrdinalIgnoreCase) ||
          p.Team.Name.Contains("Girls", StringComparison.OrdinalIgnoreCase)));
 
-    // Verificăm variantele pentru echipa de tineret / academie
-    var academy = filteredPlayers.Where(p => p.Team != null && 
-        (p.Team.Name.Contains("Academy", StringComparison.OrdinalIgnoreCase) || 
-         p.Team.Name.Contains("Castilla", StringComparison.OrdinalIgnoreCase) || 
-         p.Team.Name.Contains("Juvenil", StringComparison.OrdinalIgnoreCase) || 
+    var academy = filteredPlayers.Where(p => p.Team != null &&
+        (p.Team.Name.Contains("Academy", StringComparison.OrdinalIgnoreCase) ||
+         p.Team.Name.Contains("Castilla", StringComparison.OrdinalIgnoreCase) ||
+         p.Team.Name.Contains("Juvenil", StringComparison.OrdinalIgnoreCase) ||
          p.Team.Name.Contains("B Team", StringComparison.OrdinalIgnoreCase)));
 
-    // Tot ce a rămas și nu este nici la fete, nici la academie, merge la prima echipă (First Team)
-    var firstTeam = filteredPlayers.Where(p => p.Team == null || 
+    var firstTeam = filteredPlayers.Where(p => p.Team == null ||
         (!academy.Any(a => a.Id == p.Id) && !female.Any(f => f.Id == p.Id)));
+
+    var allPositions = Model.Select(p => p.Position).Distinct().OrderBy(p => p).ToList();
 }
 
 <div class="d-flex justify-content-between align-items-center my-4">
@@ -45,6 +44,38 @@
     </div>
 }
 
+
+<div class="card border-0 shadow-sm mb-4 p-3" style="border-radius: 12px;">
+    <div class="row g-3 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label fw-semibold small text-uppercase text-muted">Search by name</label>
+            <input type="text" id="searchName" class="form-control" placeholder="e.g. Bellingham..." oninput="applyFilters()">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label fw-semibold small text-uppercase text-muted">Position</label>
+            <select id="filterPosition" class="form-select" onchange="applyFilters()">
+                <option value="">All positions</option>
+                @foreach (var pos in allPositions)
+                {
+                    <option value="@pos">@pos</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label fw-semibold small text-uppercase text-muted">Sort by</label>
+            <select id="sortBy" class="form-select" onchange="applyFilters()">
+                <option value="number">Shirt Number</option>
+                <option value="name">Name</option>
+                <option value="goals">Goals</option>
+                <option value="assists">Assists</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-outline-secondary w-100" onclick="resetFilters()">Reset</button>
+        </div>
+    </div>
+</div>
+
 <ul class="nav nav-pills mb-4 justify-content-center" id="squadTabs" role="tablist">
     <li class="nav-item" role="presentation">
         <button class="nav-link active px-4 fw-semibold" id="first-team-tab" data-bs-toggle="tab" data-bs-target="#first-team" type="button" role="tab">First Team</button>
@@ -59,13 +90,52 @@
 
 <div class="tab-content" id="squadTabsContent">
     <div class="tab-pane fade show active" id="first-team" role="tabpanel">
-        @await Html.PartialAsync("_SquadGrid", firstTeam)
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 py-3" id="grid-first-team">
+            @foreach (var player in firstTeam)
+            {
+                <div class="col player-card"
+                     data-name="@player.Name.ToLower()"
+                     data-position="@player.Position"
+                     data-number="@player.ShirtNumber"
+                     data-goals="@player.Goals"
+                     data-assists="@player.Assists">
+                    @await Html.PartialAsync("_PlayerCard", player)
+                </div>
+            }
+        </div>
+        <div id="empty-first-team" class="text-center py-5 d-none"><p class="text-muted fs-5">No players match the filters.</p></div>
     </div>
     <div class="tab-pane fade" id="academy" role="tabpanel">
-        @await Html.PartialAsync("_SquadGrid", academy)
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 py-3" id="grid-academy">
+            @foreach (var player in academy)
+            {
+                <div class="col player-card"
+                     data-name="@player.Name.ToLower()"
+                     data-position="@player.Position"
+                     data-number="@player.ShirtNumber"
+                     data-goals="@player.Goals"
+                     data-assists="@player.Assists">
+                    @await Html.PartialAsync("_PlayerCard", player)
+                </div>
+            }
+        </div>
+        <div id="empty-academy" class="text-center py-5 d-none"><p class="text-muted fs-5">No players match the filters.</p></div>
     </div>
     <div class="tab-pane fade" id="female" role="tabpanel">
-        @await Html.PartialAsync("_SquadGrid", female)
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 py-3" id="grid-female">
+            @foreach (var player in female)
+            {
+                <div class="col player-card"
+                     data-name="@player.Name.ToLower()"
+                     data-position="@player.Position"
+                     data-number="@player.ShirtNumber"
+                     data-goals="@player.Goals"
+                     data-assists="@player.Assists">
+                    @await Html.PartialAsync("_PlayerCard", player)
+                </div>
+            }
+        </div>
+        <div id="empty-female" class="text-center py-5 d-none"><p class="text-muted fs-5">No players match the filters.</p></div>
     </div>
 </div>
 
@@ -86,3 +156,53 @@
         background-color: rgba(15, 28, 63, 0.05);
     }
 </style>
+
+<script>
+    function applyFilters() {
+        const name = document.getElementById('searchName').value.toLowerCase();
+        const position = document.getElementById('filterPosition').value;
+        const sortBy = document.getElementById('sortBy').value;
+
+        const grids = ['first-team', 'academy', 'female'];
+
+        grids.forEach(gridId => {
+            const grid = document.getElementById('grid-' + gridId);
+            const emptyMsg = document.getElementById('empty-' + gridId);
+            const cards = Array.from(grid.querySelectorAll('.player-card'));
+
+            // Filter
+            let visible = cards.filter(card => {
+                const matchName = card.dataset.name.includes(name);
+                const matchPos = !position || card.dataset.position === position;
+                return matchName && matchPos;
+            });
+
+            let hidden = cards.filter(card => !visible.includes(card));
+
+            // Sort visible cards
+            visible.sort((a, b) => {
+                if (sortBy === 'number') return parseInt(a.dataset.number) - parseInt(b.dataset.number);
+                if (sortBy === 'name') return a.dataset.name.localeCompare(b.dataset.name);
+                if (sortBy === 'goals') return parseInt(b.dataset.goals) - parseInt(a.dataset.goals);
+                if (sortBy === 'assists') return parseInt(b.dataset.assists) - parseInt(a.dataset.assists);
+            });
+
+            // Reorder DOM
+            visible.forEach(card => { card.classList.remove('d-none'); grid.appendChild(card); });
+            hidden.forEach(card => card.classList.add('d-none'));
+
+            // Show/hide empty message
+            emptyMsg.classList.toggle('d-none', visible.length > 0);
+        });
+    }
+
+    function resetFilters() {
+        document.getElementById('searchName').value = '';
+        document.getElementById('filterPosition').value = '';
+        document.getElementById('sortBy').value = 'number';
+        applyFilters();
+    }
+
+    // Sort by number on load
+    document.addEventListener('DOMContentLoaded', applyFilters);
+</script>

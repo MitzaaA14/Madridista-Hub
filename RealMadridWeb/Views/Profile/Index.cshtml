@@ -1,0 +1,254 @@
+@model RealMadridWeb.Models.ProfileViewModel
+@{
+    ViewData["Title"] = "Profilul Meu";
+}
+
+<style>
+    :root {
+        --rm-dark: #0f1c3f;
+        --rm-gold: #c19d55;
+        --rm-gold-light: #e8c97a;
+    }
+    .profile-header {
+        background: linear-gradient(135deg, var(--rm-dark) 0%, #1a2f6b 100%);
+        border-radius: 16px;
+        padding: 2rem 2.5rem;
+        margin-bottom: 2rem;
+        border-bottom: 4px solid var(--rm-gold);
+    }
+    .profile-avatar {
+        width: 72px; height: 72px;
+        background: var(--rm-gold);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 2rem; color: var(--rm-dark); font-weight: 700;
+    }
+    .tab-nav .nav-link {
+        color: #6c757d; font-weight: 600; border: none;
+        border-bottom: 3px solid transparent; border-radius: 0;
+        padding: 0.75rem 1.25rem;
+    }
+    .tab-nav .nav-link.active {
+        color: var(--rm-gold);
+        border-bottom-color: var(--rm-gold);
+        background: transparent;
+    }
+    .tab-nav .nav-link:hover { color: var(--rm-dark); }
+    .badge-count {
+        background: var(--rm-gold); color: var(--rm-dark);
+        font-size: .7rem; font-weight: 700;
+        padding: 2px 7px; border-radius: 99px;
+        vertical-align: middle; margin-left: 4px;
+    }
+    .card-item {
+        background: #fff; border-radius: 12px;
+        border: 1px solid #e9ecef;
+        padding: 1rem 1.25rem;
+        margin-bottom: .75rem;
+        display: flex; align-items: center; gap: 1rem;
+        transition: box-shadow .15s;
+    }
+    .card-item:hover { box-shadow: 0 4px 16px rgba(15,28,63,.1); }
+    .card-item .match-date {
+        font-size: .78rem; color: #6c757d;
+    }
+    .card-item .match-title { font-weight: 600; color: var(--rm-dark); }
+    .league-badge {
+        font-size: .72rem; padding: 2px 8px; border-radius: 99px;
+        background: #e8f0fe; color: #3c5acd; font-weight: 600;
+    }
+    .player-pos {
+        font-size: .72rem; padding: 2px 8px; border-radius: 99px;
+        background: #fff3cd; color: #856404; font-weight: 600;
+    }
+    .player-img {
+        width: 48px; height: 48px; border-radius: 50%;
+        object-fit: cover; border: 2px solid var(--rm-gold);
+    }
+    .player-img-placeholder {
+        width: 48px; height: 48px; border-radius: 50%;
+        background: var(--rm-dark); display: flex; align-items: center;
+        justify-content: center; font-size: 1.2rem; color: var(--rm-gold);
+        border: 2px solid var(--rm-gold); flex-shrink: 0;
+    }
+    .comment-card {
+        background: #fff; border-radius: 12px; border: 1px solid #e9ecef;
+        padding: 1rem 1.25rem; margin-bottom: .75rem;
+    }
+    .comment-meta { font-size: .78rem; color: #6c757d; }
+    .btn-remove {
+        background: none; border: 1px solid #dee2e6;
+        border-radius: 8px; padding: 4px 10px;
+        color: #adb5bd; font-size: .78rem;
+        transition: all .15s; flex-shrink: 0;
+    }
+    .btn-remove:hover { background: #fff5f5; border-color: #f5c2c7; color: #dc3545; }
+    .empty-state {
+        text-align: center; padding: 3rem 1rem; color: #adb5bd;
+    }
+    .empty-state .icon { font-size: 2.5rem; margin-bottom: .5rem; }
+</style>
+
+<!-- Header profil -->
+<div class="profile-header d-flex align-items-center gap-3">
+    <div class="profile-avatar">
+        @Model.Email.Substring(0,1).ToUpper()
+    </div>
+    <div>
+        <h4 class="text-white mb-0 fw-bold">@Model.Email</h4>
+        <small style="color: var(--rm-gold);">Madridista Hub · Cont de Fan</small>
+    </div>
+</div>
+
+<!-- Taburi -->
+<ul class="nav tab-nav border-bottom mb-4" id="profileTabs">
+    <li class="nav-item">
+        <a class="nav-link active" data-bs-toggle="tab" href="#watchlist">
+            📅 Watchlist
+            @if (Model.Watchlist.Any())
+            {
+                <span class="badge-count">@Model.Watchlist.Count()</span>
+            }
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#favorites">
+            ⭐ Jucători Favoriți
+            @if (Model.FavoritePlayers.Any())
+            {
+                <span class="badge-count">@Model.FavoritePlayers.Count()</span>
+            }
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#comments">
+            💬 Comentariile Mele
+            @if (Model.RecentComments.Any())
+            {
+                <span class="badge-count">@Model.RecentComments.Count()</span>
+            }
+        </a>
+    </li>
+</ul>
+
+<div class="tab-content">
+
+    <!-- TAB: Watchlist -->
+    <div class="tab-pane fade show active" id="watchlist">
+        @if (!Model.Watchlist.Any())
+        {
+            <div class="empty-state">
+                <div class="icon">📅</div>
+                <p class="mb-1 fw-semibold">Niciun meci în watchlist</p>
+                <small>Adaugă meciuri din pagina <a asp-controller="Matches" asp-action="Index">Schedule</a></small>
+            </div>
+        }
+        else
+        {
+            @foreach (var w in Model.Watchlist)
+            {
+                <div class="card-item">
+                    <div class="flex-grow-1">
+                        <div class="match-title">Real Madrid vs @w.Match!.Opponent</div>
+                        <div class="match-date">
+                            @w.Match.Date.ToString("dd MMM yyyy, HH:mm")
+                            · @w.Match.Stadium
+                            · <span class="league-badge">@w.Match.League</span>
+                        </div>
+                    </div>
+                    <a asp-controller="Matches" asp-action="Details" asp-route-id="@w.Match.Id"
+                       class="btn btn-sm btn-outline-secondary me-1">Detalii</a>
+                    <form asp-controller="Profile" asp-action="RemoveFromWatchlist" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="matchId" value="@w.MatchId" />
+                        <input type="hidden" name="returnUrl" value="@Url.Action("Index","Profile")" />
+                        <button type="submit" class="btn-remove">✕ Elimină</button>
+                    </form>
+                </div>
+            }
+        }
+    </div>
+
+    <!-- TAB: Jucători favoriți -->
+    <div class="tab-pane fade" id="favorites">
+        @if (!Model.FavoritePlayers.Any())
+        {
+            <div class="empty-state">
+                <div class="icon">⭐</div>
+                <p class="mb-1 fw-semibold">Niciun jucător favorit</p>
+                <small>Adaugă jucători din pagina <a asp-controller="Players" asp-action="Index">Squad</a></small>
+            </div>
+        }
+        else
+        {
+            <div class="row g-3">
+                @foreach (var f in Model.FavoritePlayers)
+                {
+                    <div class="col-md-6">
+                        <div class="card-item">
+                            @if (!string.IsNullOrEmpty(f.Player!.ImageUrl))
+                            {
+                                <img src="@f.Player.ImageUrl" class="player-img" alt="@f.Player.Name" />
+                            }
+                            else
+                            {
+                                <div class="player-img-placeholder">⚽</div>
+                            }
+                            <div class="flex-grow-1">
+                                <div class="match-title">#@f.Player.ShirtNumber · @f.Player.Name</div>
+                                <div class="match-date">
+                                    <span class="player-pos">@f.Player.Position</span>
+                                    · @f.Player.Goals gol(uri), @f.Player.Assists pas(e) decisive
+                                </div>
+                            </div>
+                            <form asp-controller="Profile" asp-action="RemoveFavoritePlayer" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="playerId" value="@f.PlayerId" />
+                                <input type="hidden" name="returnUrl" value="@Url.Action("Index","Profile")" />
+                                <button type="submit" class="btn-remove">✕</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- TAB: Comentarii -->
+    <div class="tab-pane fade" id="comments">
+        @if (!Model.RecentComments.Any())
+        {
+            <div class="empty-state">
+                <div class="icon">💬</div>
+                <p class="mb-1 fw-semibold">Niciun comentariu încă</p>
+                <small>Lasă un comentariu din pagina unui meci</small>
+            </div>
+        }
+        else
+        {
+            @foreach (var c in Model.RecentComments)
+            {
+                <div class="comment-card">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="comment-meta mb-1">
+                                📅 <a asp-controller="Matches" asp-action="Details" asp-route-id="@c.MatchId">
+                                    Real Madrid vs @c.Match!.Opponent
+                                </a>
+                                · @c.CreatedAt.ToString("dd MMM yyyy, HH:mm")
+                            </div>
+                            <div>@c.Content</div>
+                        </div>
+                        <form asp-controller="Profile" asp-action="DeleteComment" method="post" class="ms-3">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="commentId" value="@c.Id" />
+                            <input type="hidden" name="matchId" value="@c.MatchId" />
+                            <button type="submit" class="btn-remove">🗑</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+</div>
