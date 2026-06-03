@@ -92,6 +92,41 @@ RealMadridWeb/
 
 Full API documentation available at `/swagger` when running in Development mode.
 
+## Screenshots
+
+### Home Page
+![Home Page](screenshots/homepage.png)
+
+### Squad — Players Index
+![Players Index](screenshots/playerslist.png)
+
+### Player Card
+![Player Card](screenshots/playercard.png)
+
+### Match Fixtures
+![Matches](screenshots/matches.png)
+
+### Match Details
+![Match Details](screenshots/match%20details.png)
+
+### Live Stats (SPA Component)
+![Live Stats](screenshots/live%20stats.png)
+
+### Staff Directory
+![Staff](screenshots/staff.png)
+
+### Sponsors & Partners
+![Sponsors](screenshots/sponsors.png)
+
+### User Profile
+![User Profile](screenshots/user%20profile.png)
+
+### Admin — Create Match (form validation)
+![Create Match](screenshots/create%20match.png)
+
+### Swagger UI
+![Swagger](screenshots/swagger.png)
+
 ## Database Entities
 
 - **Team** — One-to-Many with Player, Staff, Match
