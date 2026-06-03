@@ -1,4 +1,4 @@
-@model IEnumerable<RealMadridWeb.Models.Player>
+@model IEnumerable<RealMadridWeb.DTOs.PlayerReadDto>
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<IdentityUser> SignInManager
 
@@ -11,19 +11,19 @@
         ? Model.Where(p => p.TeamId == int.Parse(selectedTeamId))
         : Model;
 
-    var female = filteredPlayers.Where(p => p.Team != null &&
-        (p.Team.Name.Contains("Female", StringComparison.OrdinalIgnoreCase) ||
-         p.Team.Name.Contains("Women", StringComparison.OrdinalIgnoreCase) ||
-         p.Team.Name.Contains("Femenino", StringComparison.OrdinalIgnoreCase) ||
-         p.Team.Name.Contains("Girls", StringComparison.OrdinalIgnoreCase)));
+    var female = filteredPlayers.Where(p => !string.IsNullOrEmpty(p.TeamName) &&
+        (p.TeamName.Contains("Female", StringComparison.OrdinalIgnoreCase) ||
+         p.TeamName.Contains("Women", StringComparison.OrdinalIgnoreCase) ||
+         p.TeamName.Contains("Femenino", StringComparison.OrdinalIgnoreCase) ||
+         p.TeamName.Contains("Girls", StringComparison.OrdinalIgnoreCase)));
 
-    var academy = filteredPlayers.Where(p => p.Team != null &&
-        (p.Team.Name.Contains("Academy", StringComparison.OrdinalIgnoreCase) ||
-         p.Team.Name.Contains("Castilla", StringComparison.OrdinalIgnoreCase) ||
-         p.Team.Name.Contains("Juvenil", StringComparison.OrdinalIgnoreCase) ||
-         p.Team.Name.Contains("B Team", StringComparison.OrdinalIgnoreCase)));
+    var academy = filteredPlayers.Where(p => !string.IsNullOrEmpty(p.TeamName) &&
+        (p.TeamName.Contains("Academy", StringComparison.OrdinalIgnoreCase) ||
+         p.TeamName.Contains("Castilla", StringComparison.OrdinalIgnoreCase) ||
+         p.TeamName.Contains("Juvenil", StringComparison.OrdinalIgnoreCase) ||
+         p.TeamName.Contains("B Team", StringComparison.OrdinalIgnoreCase)));
 
-    var firstTeam = filteredPlayers.Where(p => p.Team == null ||
+    var firstTeam = filteredPlayers.Where(p => string.IsNullOrEmpty(p.TeamName) ||
         (!academy.Any(a => a.Id == p.Id) && !female.Any(f => f.Id == p.Id)));
 
     var allPositions = Model.Select(p => p.Position).Distinct().OrderBy(p => p).ToList();

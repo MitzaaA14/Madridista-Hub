@@ -2,34 +2,34 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using RealMadridWeb.Data;
-using RealMadridWeb.Models;
+using RealMadridWeb.DTOs;
 using RealMadridWeb.Services;
 
 namespace RealMadridWeb.Controllers
 {
     public class PlayersController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IPlayerService _playerService;
+        private readonly ITeamService _teamService;
         private readonly IProfileService _profileService;
         private readonly UserManager<IdentityUser> _userManager;
 
         public PlayersController(
-            ApplicationDbContext context,
+            IPlayerService playerService,
+            ITeamService teamService,
             IProfileService profileService,
             UserManager<IdentityUser> userManager)
         {
-            _context = context;
+            _playerService = playerService;
+            _teamService = teamService;
             _profileService = profileService;
             _userManager = userManager;
         }
 
         public async Task<IActionResult> Index()
         {
-            var players = await _context.Players.Include(p => p.Team).ToListAsync();
+            var players = await _playerService.GetAllPlayersAsync();
 
-            // Dacă userul e logat, preîncarcă favorite în ViewData pentru fiecare player
             if (User.Identity?.IsAuthenticated == true)
             {
                 var userId = _userManager.GetUserId(User)!;
@@ -44,25 +44,26 @@ namespace RealMadridWeb.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["TeamId"] = new SelectList(_context.Teams, "Id", "Name");
-            return View();
+            var teams = await _teamService.GetAllAsync();
+            ViewData["TeamId"] = new SelectList(teams, "Id", "Name");
+            return View(new PlayerCreateDto());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([Bind("Id,Name,Position,ShirtNumber,ImageUrl,TeamId,Goals,Assists")] Player player)
+        public async Task<IActionResult> Create(PlayerCreateDto dto)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(player);
-                await _context.SaveChangesAsync();
+                await _playerService.CreatePlayerAsync(dto);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["TeamId"] = new SelectList(_context.Teams, "Id", "Name", player.TeamId);
-            return View(player);
+            var teams = await _teamService.GetAllAsync();
+            ViewData["TeamId"] = new SelectList(teams, "Id", "Name", dto.TeamId);
+            return View(dto);
         }
 
         [HttpGet]
@@ -70,29 +71,34 @@ namespace RealMadridWeb.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
-            var player = await _context.Players.FindAsync(id);
+            var player = await _playerService.GetPlayerByIdAsync(id.Value);
             if (player == null) return NotFound();
-            ViewData["TeamId"] = new SelectList(_context.Teams, "Id", "Name", player.TeamId);
             return View(player);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Position,ShirtNumber,ImageUrl,TeamId,Goals,Assists")] Player player)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Position,ShirtNumber,ImageUrl,TeamId,Goals,Assists")] PlayerReadDto model)
         {
-            if (id != player.Id) return NotFound();
+            if (id != model.Id) return NotFound();
             if (ModelState.IsValid)
             {
-                try { _context.Update(player); await _context.SaveChangesAsync(); }
-                catch (DbUpdateConcurrencyException)
+                var dto = new PlayerCreateDto
                 {
-                    if (!PlayerExists(player.Id)) return NotFound(); else throw;
-                }
+                    Name = model.Name,
+                    Position = model.Position,
+                    ShirtNumber = model.ShirtNumber,
+                    ImageUrl = model.ImageUrl,
+                    Goals = model.Goals,
+                    Assists = model.Assists,
+                    TeamId = model.TeamId
+                };
+                var updated = await _playerService.UpdatePlayerAsync(id, dto);
+                if (!updated) return NotFound();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["TeamId"] = new SelectList(_context.Teams, "Id", "Name", player.TeamId);
-            return View(player);
+            return View(model);
         }
 
         [HttpGet]
@@ -100,7 +106,7 @@ namespace RealMadridWeb.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
-            var player = await _context.Players.Include(p => p.Team).FirstOrDefaultAsync(m => m.Id == id);
+            var player = await _playerService.GetPlayerByIdAsync(id.Value);
             if (player == null) return NotFound();
             return View(player);
         }
@@ -110,12 +116,8 @@ namespace RealMadridWeb.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var player = await _context.Players.FindAsync(id);
-            if (player != null) _context.Players.Remove(player);
-            await _context.SaveChangesAsync();
+            await _playerService.DeletePlayerAsync(id);
             return RedirectToAction(nameof(Index));
         }
-
-        private bool PlayerExists(int id) => _context.Players.Any(e => e.Id == id);
     }
 }

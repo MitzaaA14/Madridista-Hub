@@ -1,31 +1,23 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using RealMadridWeb.Data;
 using RealMadridWeb.Models;
-using System;
+using RealMadridWeb.Services;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace RealMadridWeb.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IMatchService _matchService;
 
-        public HomeController(ApplicationDbContext context)
+        public HomeController(IMatchService matchService)
         {
-            _context = context;
+            _matchService = matchService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var nextMatch = await _context.Matches
-                .Include(m => m.Team)
-                .Where(m => m.Date >= DateTime.Now)
-                .OrderBy(m => m.Date)
-                .FirstOrDefaultAsync();
-
+            var upcoming = await _matchService.GetUpcomingAsync();
+            var nextMatch = upcoming.FirstOrDefault();
             return View(nextMatch);
         }
 

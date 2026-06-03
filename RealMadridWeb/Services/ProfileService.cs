@@ -22,7 +22,6 @@ namespace RealMadridWeb.Services
             _logger = logger;
         }
 
-        // ── Watchlist ──────────────────────────────────────────────────────────
 
         public Task<IEnumerable<WatchlistMatch>> GetWatchlistAsync(string userId) =>
             _watchlistRepo.GetByUserIdAsync(userId);
@@ -51,7 +50,6 @@ namespace RealMadridWeb.Services
         public async Task<bool> IsInWatchlistAsync(string userId, int matchId) =>
             await _watchlistRepo.GetAsync(userId, matchId) != null;
 
-        // ── Favorite Players ───────────────────────────────────────────────────
 
         public Task<IEnumerable<FavoritePlayer>> GetFavoritePlayersAsync(string userId) =>
             _favoriteRepo.GetByUserIdAsync(userId);
@@ -80,8 +78,6 @@ namespace RealMadridWeb.Services
         public async Task<bool> IsFavoritePlayerAsync(string userId, int playerId) =>
             await _favoriteRepo.GetAsync(userId, playerId) != null;
 
-        // ── Comments ───────────────────────────────────────────────────────────
-
         public Task<IEnumerable<MatchComment>> GetCommentsByMatchAsync(int matchId) =>
             _commentRepo.GetByMatchIdAsync(matchId);
 
@@ -106,7 +102,6 @@ namespace RealMadridWeb.Services
         public async Task<bool> DeleteCommentAsync(string userId, int commentId)
         {
             var comment = await _commentRepo.GetByIdAsync(commentId);
-            // Userul poate șterge doar propriile comentarii
             if (comment == null || comment.UserId != userId) return false;
 
             _commentRepo.Delete(comment);

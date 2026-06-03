@@ -6,7 +6,7 @@ namespace RealMadridWeb.Services
     {
         Task<IEnumerable<PlayerReadDto>> GetAllPlayersAsync();
         Task<PlayerReadDto?> GetPlayerByIdAsync(int id);
-        Task CreatePlayerAsync(PlayerCreateDto playerCreateDto);
+        Task<int> CreatePlayerAsync(PlayerCreateDto playerCreateDto);
         Task<bool> UpdatePlayerAsync(int id, PlayerCreateDto playerUpdateDto);
         Task<bool> DeletePlayerAsync(int id);
     }

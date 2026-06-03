@@ -1,4 +1,4 @@
-@model RealMadridWeb.Models.Match
+@model RealMadridWeb.DTOs.Match.MatchDto
 @using Microsoft.AspNetCore.Identity
 @using RealMadridWeb.Models
 @inject SignInManager<IdentityUser> SignInManager
@@ -85,7 +85,7 @@
                                 style="background:@(isWatchlisted ? "#c19d55" : "rgba(255,255,255,.12)");
                                        color:#fff; border:1px solid @(isWatchlisted ? "#c19d55" : "rgba(255,255,255,.4)");
                                        border-radius:8px;">
-                            @(isWatchlisted ? "📅 În Watchlist" : "📅 Adaugă în Watchlist")
+                            @(isWatchlisted ? " In Watchlist" : "Add to Watchlist")
                         </button>
                     </form>
                 </div>
@@ -99,7 +99,7 @@
             <h5 class="fw-bold mb-3" style="color: #0f1c3f;">🏟️ Squad in this Match</h5>
 
             @if (!playerMatches.Any())
-            {
+            {   
                 <p class="text-muted fst-italic">No players added to this match yet.</p>
             }
             else
@@ -181,14 +181,13 @@
     <!-- ── COMENTARII ────────────────────────────────────────────────── -->
     <div class="card border-0 shadow-sm" style="border-radius: 15px;">
         <div class="card-body p-4">
-            <h5 class="fw-bold mb-4" style="color: #0f1c3f;">💬 Comentarii (@comments.Count)</h5>
+            <h5 class="fw-bold mb-4" style="color: #0f1c3f;">💬 Comments (@comments.Count)</h5>
 
             @if (TempData["CommentError"] != null)
             {
                 <div class="alert alert-danger py-2">@TempData["CommentError"]</div>
             }
 
-            <!-- Form comentariu nou -->
             @if (isLoggedIn)
             {
                 <form asp-controller="Profile" asp-action="AddComment" method="post" class="mb-4">
@@ -196,12 +195,12 @@
                     <input type="hidden" name="matchId" value="@Model.Id" />
                     <div class="d-flex gap-2">
                         <textarea name="content" class="form-control" rows="2"
-                                  placeholder="Lasă un comentariu despre acest meci..."
+                                  placeholder="Leave a comment about this match..."
                                   maxlength="500" required
                                   style="border-radius:10px; resize:none;"></textarea>
                         <button type="submit" class="btn align-self-end px-4 fw-semibold"
                                 style="background:#0f1c3f; color:#fff; border-radius:10px; white-space:nowrap;">
-                            Trimite
+                            Submit
                         </button>
                     </div>
                 </form>

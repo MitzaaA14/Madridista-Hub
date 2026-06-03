@@ -1,6 +1,6 @@
 @model RealMadridWeb.Models.ProfileViewModel
 @{
-    ViewData["Title"] = "Profilul Meu";
+    ViewData["Title"] = "My Profile";
 }
 
 <style>
@@ -96,7 +96,7 @@
     </div>
     <div>
         <h4 class="text-white mb-0 fw-bold">@Model.Email</h4>
-        <small style="color: var(--rm-gold);">Madridista Hub · Cont de Fan</small>
+        <small style="color: var(--rm-gold);">Madridista Hub · Fan Account</small>
     </div>
 </div>
 
@@ -104,7 +104,7 @@
 <ul class="nav tab-nav border-bottom mb-4" id="profileTabs">
     <li class="nav-item">
         <a class="nav-link active" data-bs-toggle="tab" href="#watchlist">
-            📅 Watchlist
+            Watchlist
             @if (Model.Watchlist.Any())
             {
                 <span class="badge-count">@Model.Watchlist.Count()</span>
@@ -113,7 +113,7 @@
     </li>
     <li class="nav-item">
         <a class="nav-link" data-bs-toggle="tab" href="#favorites">
-            ⭐ Jucători Favoriți
+            Favorite Players
             @if (Model.FavoritePlayers.Any())
             {
                 <span class="badge-count">@Model.FavoritePlayers.Count()</span>
@@ -122,7 +122,7 @@
     </li>
     <li class="nav-item">
         <a class="nav-link" data-bs-toggle="tab" href="#comments">
-            💬 Comentariile Mele
+            My Comments
             @if (Model.RecentComments.Any())
             {
                 <span class="badge-count">@Model.RecentComments.Count()</span>
@@ -138,9 +138,8 @@
         @if (!Model.Watchlist.Any())
         {
             <div class="empty-state">
-                <div class="icon">📅</div>
-                <p class="mb-1 fw-semibold">Niciun meci în watchlist</p>
-                <small>Adaugă meciuri din pagina <a asp-controller="Matches" asp-action="Index">Schedule</a></small>
+                <p class="mb-1 fw-semibold">No matches in watchlist</p>
+                <small>Add matches from the <a asp-controller="Matches" asp-action="Index">Schedule</a></small>
             </div>
         }
         else
@@ -157,26 +156,25 @@
                         </div>
                     </div>
                     <a asp-controller="Matches" asp-action="Details" asp-route-id="@w.Match.Id"
-                       class="btn btn-sm btn-outline-secondary me-1">Detalii</a>
+                       class="btn btn-sm btn-outline-secondary me-1">Details</a>
                     <form asp-controller="Profile" asp-action="RemoveFromWatchlist" method="post" class="d-inline">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="matchId" value="@w.MatchId" />
                         <input type="hidden" name="returnUrl" value="@Url.Action("Index","Profile")" />
-                        <button type="submit" class="btn-remove">✕ Elimină</button>
+                        <button type="submit" class="btn-remove">✕ Remove</button>
                     </form>
                 </div>
             }
         }
     </div>
 
-    <!-- TAB: Jucători favoriți -->
+    <!-- TAB: Favorite Players -->
     <div class="tab-pane fade" id="favorites">
         @if (!Model.FavoritePlayers.Any())
         {
             <div class="empty-state">
-                <div class="icon">⭐</div>
-                <p class="mb-1 fw-semibold">Niciun jucător favorit</p>
-                <small>Adaugă jucători din pagina <a asp-controller="Players" asp-action="Index">Squad</a></small>
+                <p class="mb-1 fw-semibold">No favorite players yet</p>
+                <small>Add players from the <a asp-controller="Players" asp-action="Index">Squad</a> page</small>
             </div>
         }
         else
@@ -198,7 +196,7 @@
                                 <div class="match-title">#@f.Player.ShirtNumber · @f.Player.Name</div>
                                 <div class="match-date">
                                     <span class="player-pos">@f.Player.Position</span>
-                                    · @f.Player.Goals gol(uri), @f.Player.Assists pas(e) decisive
+                                    · @f.Player.Goals goal(s), @f.Player.Assists assist(s)
                                 </div>
                             </div>
                             <form asp-controller="Profile" asp-action="RemoveFavoritePlayer" method="post" class="d-inline">
@@ -214,14 +212,14 @@
         }
     </div>
 
-    <!-- TAB: Comentarii -->
+    <!-- TAB: Comments -->
     <div class="tab-pane fade" id="comments">
         @if (!Model.RecentComments.Any())
         {
             <div class="empty-state">
                 <div class="icon">💬</div>
-                <p class="mb-1 fw-semibold">Niciun comentariu încă</p>
-                <small>Lasă un comentariu din pagina unui meci</small>
+                <p class="mb-1 fw-semibold">No comments yet</p>
+                <small>Leave a comment from a match page</small>
             </div>
         }
         else
@@ -232,7 +230,7 @@
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <div class="comment-meta mb-1">
-                                📅 <a asp-controller="Matches" asp-action="Details" asp-route-id="@c.MatchId">
+                                <a asp-controller="Matches" asp-action="Details" asp-route-id="@c.MatchId">
                                     Real Madrid vs @c.Match!.Opponent
                                 </a>
                                 · @c.CreatedAt.ToString("dd MMM yyyy, HH:mm")

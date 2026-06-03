@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RealMadridWeb.Data;
+using RealMadridWeb.DTOs.Match;
 using RealMadridWeb.Models;
 using RealMadridWeb.Services;
 
@@ -11,47 +12,54 @@ namespace RealMadridWeb.Controllers
 {
     public class MatchesController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IMatchService _matchService;
+        private readonly ITeamService _teamService;
         private readonly IProfileService _profileService;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly ApplicationDbContext _context;
 
         public MatchesController(
-            ApplicationDbContext context,
+            IMatchService matchService,
+            ITeamService teamService,
             IProfileService profileService,
-            UserManager<IdentityUser> userManager)
+            UserManager<IdentityUser> userManager,
+            ApplicationDbContext context)
         {
-            _context = context;
+            _matchService = matchService;
+            _teamService = teamService;
             _profileService = profileService;
             _userManager = userManager;
+            _context = context;
         }
 
         public async Task<IActionResult> Index()
         {
-            var matches = _context.Matches.Include(m => m.Team);
-            return View(await matches.ToListAsync());
+            var matches = await _matchService.GetAllAsync();
+            return View(matches);
         }
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["TeamId"] = new SelectList(_context.Teams, "Id", "Name");
-            return View();
+            var teams = await _teamService.GetAllAsync();
+            ViewData["TeamId"] = new SelectList(teams, "Id", "Name");
+            return View(new CreateMatchDto());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([Bind("Id,Opponent,League,Stadium,Date,Venue,HomeTeamLogoUrl,AwayTeamLogoUrl,HomeScore,AwayScore,IsFinished,TeamId")] Match match)
+        public async Task<IActionResult> Create(CreateMatchDto dto)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(match);
-                await _context.SaveChangesAsync();
+                await _matchService.CreateAsync(dto);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["TeamId"] = new SelectList(_context.Teams, "Id", "Name", match.TeamId);
-            return View(match);
+            var teams = await _teamService.GetAllAsync();
+            ViewData["TeamId"] = new SelectList(teams, "Id", "Name", dto.TeamId);
+            return View(dto);
         }
 
         [HttpGet]
@@ -59,29 +67,42 @@ namespace RealMadridWeb.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
-            var match = await _context.Matches.FindAsync(id);
+            var match = await _matchService.GetByIdAsync(id.Value);
             if (match == null) return NotFound();
-            ViewData["TeamId"] = new SelectList(_context.Teams, "Id", "Name", match.TeamId);
+            var teams = await _teamService.GetAllAsync();
+            ViewData["TeamId"] = new SelectList(teams, "Id", "Name", match.TeamId);
             return View(match);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Opponent,League,Stadium,Date,Venue,HomeTeamLogoUrl,AwayTeamLogoUrl,HomeScore,AwayScore,IsFinished,TeamId")] Match match)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Opponent,League,Stadium,Date,Venue,HomeTeamLogoUrl,AwayTeamLogoUrl,HomeScore,AwayScore,IsFinished,TeamId")] MatchDto model)
         {
-            if (id != match.Id) return NotFound();
+            if (id != model.Id) return NotFound();
             if (ModelState.IsValid)
             {
-                try { _context.Update(match); await _context.SaveChangesAsync(); }
-                catch (DbUpdateConcurrencyException)
+                var dto = new UpdateMatchDto
                 {
-                    if (!MatchExists(match.Id)) return NotFound(); else throw;
-                }
+                    Opponent = model.Opponent,
+                    League = model.League,
+                    Stadium = model.Stadium,
+                    Date = model.Date,
+                    Venue = model.Venue,
+                    HomeTeamLogoUrl = model.HomeTeamLogoUrl,
+                    AwayTeamLogoUrl = model.AwayTeamLogoUrl,
+                    HomeScore = model.HomeScore,
+                    AwayScore = model.AwayScore,
+                    IsFinished = model.IsFinished,
+                    TeamId = model.TeamId
+                };
+                var updated = await _matchService.UpdateAsync(id, dto);
+                if (!updated) return NotFound();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["TeamId"] = new SelectList(_context.Teams, "Id", "Name", match.TeamId);
-            return View(match);
+            var teams = await _teamService.GetAllAsync();
+            ViewData["TeamId"] = new SelectList(teams, "Id", "Name", model.TeamId);
+            return View(model);
         }
 
         [HttpGet]
@@ -89,7 +110,7 @@ namespace RealMadridWeb.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
-            var match = await _context.Matches.Include(m => m.Team).FirstOrDefaultAsync(m => m.Id == id);
+            var match = await _matchService.GetByIdAsync(id.Value);
             if (match == null) return NotFound();
             return View(match);
         }
@@ -99,9 +120,7 @@ namespace RealMadridWeb.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var match = await _context.Matches.FindAsync(id);
-            if (match != null) _context.Matches.Remove(match);
-            await _context.SaveChangesAsync();
+            await _matchService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
@@ -110,7 +129,7 @@ namespace RealMadridWeb.Controllers
         {
             if (id == null) return NotFound();
 
-            var match = await _context.Matches.Include(m => m.Team).FirstOrDefaultAsync(m => m.Id == id);
+            var match = await _matchService.GetByIdAsync(id.Value);
             if (match == null) return NotFound();
 
             var playerMatches = await _context.PlayerMatches
@@ -122,11 +141,9 @@ namespace RealMadridWeb.Controllers
             ViewData["PlayerId"] = new SelectList(
                 _context.Players.Where(p => p.TeamId == match.TeamId).ToList(), "Id", "Name");
 
-            // Comentarii
             var comments = await _profileService.GetCommentsByMatchAsync(id.Value);
             ViewData["Comments"] = comments.ToList();
 
-            // Watchlist status + userId curent
             if (User.Identity?.IsAuthenticated == true)
             {
                 var userId = _userManager.GetUserId(User)!;
@@ -166,7 +183,5 @@ namespace RealMadridWeb.Controllers
             if (pm != null) { _context.PlayerMatches.Remove(pm); await _context.SaveChangesAsync(); }
             return RedirectToAction(nameof(Details), new { id = matchId });
         }
-
-        private bool MatchExists(int id) => _context.Matches.Any(e => e.Id == id);
     }
 }

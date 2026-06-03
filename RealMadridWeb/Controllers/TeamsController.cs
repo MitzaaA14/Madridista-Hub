@@ -1,44 +1,43 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using RealMadridWeb.Data;
-using RealMadridWeb.Models;
+using RealMadridWeb.DTOs.Team;
+using RealMadridWeb.Services;
 
 namespace RealMadridWeb.Controllers
 {
     public class TeamsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ITeamService _teamService;
 
-        public TeamsController(ApplicationDbContext context)
+        public TeamsController(ITeamService teamService)
         {
-            _context = context;
+            _teamService = teamService;
         }
 
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Teams.ToListAsync());
+            var teams = await _teamService.GetAllAsync();
+            return View(teams);
         }
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
-            return View();
+            return View(new CreateTeamDto());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([Bind("Id,Name,ImageUrl")] Team team)
+        public async Task<IActionResult> Create(CreateTeamDto dto)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(team);
-                await _context.SaveChangesAsync();
+                await _teamService.CreateAsync(dto);
                 return RedirectToAction(nameof(Index));
             }
-            return View(team);
+            return View(dto);
         }
 
         [HttpGet]
@@ -46,35 +45,25 @@ namespace RealMadridWeb.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
-
-            var team = await _context.Teams.FindAsync(id);
+            var team = await _teamService.GetByIdAsync(id.Value);
             if (team == null) return NotFound();
-
             return View(team);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ImageUrl")] Team team)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ImageUrl")] TeamDto model)
         {
-            if (id != team.Id) return NotFound();
-
+            if (id != model.Id) return NotFound();
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(team);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TeamExists(team.Id)) return NotFound();
-                    else throw;
-                }
+                var dto = new UpdateTeamDto { Name = model.Name, ImageUrl = model.ImageUrl };
+                var updated = await _teamService.UpdateAsync(id, dto);
+                if (!updated) return NotFound();
                 return RedirectToAction(nameof(Index));
             }
-            return View(team);
+            return View(model);
         }
 
         [HttpGet]
@@ -82,10 +71,8 @@ namespace RealMadridWeb.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
-
-            var team = await _context.Teams.FirstOrDefaultAsync(m => m.Id == id);
+            var team = await _teamService.GetByIdAsync(id.Value);
             if (team == null) return NotFound();
-
             return View(team);
         }
 
@@ -94,18 +81,8 @@ namespace RealMadridWeb.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var team = await _context.Teams.FindAsync(id);
-            if (team != null)
-            {
-                _context.Teams.Remove(team);
-            }
-            await _context.SaveChangesAsync();
+            await _teamService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool TeamExists(int id)
-        {
-            return _context.Teams.Any(e => e.Id == id);
         }
     }
 }

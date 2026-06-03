@@ -43,8 +43,9 @@ namespace RealMadridWeb.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _playerService.CreatePlayerAsync(playerCreateDto);
-            return StatusCode(201);
+            var createdId = await _playerService.CreatePlayerAsync(playerCreateDto);
+            var createdPlayer = await _playerService.GetPlayerByIdAsync(createdId);
+            return CreatedAtRoute("GetPlayerById", new { id = createdId }, createdPlayer);
         }
 
         [HttpPut("{id}")]

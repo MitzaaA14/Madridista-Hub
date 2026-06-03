@@ -1,4 +1,4 @@
-﻿@model RealMadridWeb.Models.Match
+﻿@model RealMadridWeb.DTOs.Match.MatchDto
 
 @{
     ViewData["Title"] = "Home Page";
@@ -21,7 +21,7 @@
             {
                 <div class="text-center p-3 bg-light rounded-3">
                     <div class="d-flex justify-content-center gap-1 mb-2">
-                        <span class="badge bg-primary text-uppercase" style="font-size: 0.65rem;">@(Model.Team?.Name ?? "Real Madrid")</span>
+                        <span class="badge bg-primary text-uppercase" style="font-size: 0.65rem;">@(string.IsNullOrEmpty(Model.TeamName) ? "Real Madrid" : Model.TeamName)</span>
                         <span class="badge bg-dark text-uppercase" style="font-size: 0.65rem;">@Model.League</span>
                         <span class="badge bg-secondary text-uppercase" style="font-size: 0.65rem;">@Model.Venue</span>
                     </div>

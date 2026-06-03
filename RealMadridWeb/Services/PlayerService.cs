@@ -28,7 +28,9 @@ namespace RealMadridWeb.Services
                 ShirtNumber = p.ShirtNumber,
                 Goals = p.Goals,
                 Assists = p.Assists,
-                TeamName = p.Team != null ? p.Team.Name : "No Team"
+                ImageUrl = p.ImageUrl,
+                TeamId = p.TeamId,
+                TeamName = p.Team != null ? p.Team.Name : string.Empty
             });
         }
 
@@ -50,11 +52,13 @@ namespace RealMadridWeb.Services
                 ShirtNumber = p.ShirtNumber,
                 Goals = p.Goals,
                 Assists = p.Assists,
-                TeamName = p.Team != null ? p.Team.Name : "No Team"
+                ImageUrl = p.ImageUrl,
+                TeamId = p.TeamId,
+                TeamName = p.Team != null ? p.Team.Name : string.Empty
             };
         }
 
-        public async Task CreatePlayerAsync(PlayerCreateDto dto)
+        public async Task<int> CreatePlayerAsync(PlayerCreateDto dto)
         {
             _logger.LogInformation($"Creating a new player named {dto.Name}.");
             var player = new Player
@@ -64,12 +68,14 @@ namespace RealMadridWeb.Services
                 ShirtNumber = dto.ShirtNumber,
                 Goals = dto.Goals,
                 Assists = dto.Assists,
+                ImageUrl = dto.ImageUrl,
                 TeamId = dto.TeamId
             };
 
             await _repository.AddPlayerAsync(player);
             await _repository.SaveChangesAsync();
             _logger.LogInformation($"Player {dto.Name} successfully created with internal ID {player.Id}.");
+            return player.Id;
         }
 
         public async Task<bool> UpdatePlayerAsync(int id, PlayerCreateDto dto)
@@ -87,6 +93,7 @@ namespace RealMadridWeb.Services
             player.ShirtNumber = dto.ShirtNumber;
             player.Goals = dto.Goals;
             player.Assists = dto.Assists;
+            player.ImageUrl = dto.ImageUrl;
             player.TeamId = dto.TeamId;
 
             _repository.UpdatePlayer(player);

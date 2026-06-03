@@ -8,6 +8,8 @@ namespace RealMadridWeb.DTOs
         public int ShirtNumber { get; set; }
         public int Goals { get; set; }
         public int Assists { get; set; }
+        public string? ImageUrl { get; set; }
+        public int TeamId { get; set; }
         public string TeamName { get; set; } = string.Empty;
     }
 }

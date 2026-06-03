@@ -15,6 +15,7 @@ namespace RealMadridWeb.DTOs
 
         public int Goals { get; set; } = 0;
         public int Assists { get; set; } = 0;
+        public string? ImageUrl { get; set; }
 
         [Required]
         public int TeamId { get; set; }

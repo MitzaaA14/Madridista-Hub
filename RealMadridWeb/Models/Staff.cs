@@ -9,7 +9,6 @@ namespace RealMadridWeb.Models
         [Required]
         public string Name { get; set; } = string.Empty;
 
-        // Câmpul opțional pentru poza de profil a antrenorului/staff-ului
         public string? ImageUrl { get; set; }
 
         [Required]

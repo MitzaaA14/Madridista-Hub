@@ -23,7 +23,6 @@ namespace RealMadridWeb.Controllers
             _logger = logger;
         }
 
-        // GET /Profile
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -40,7 +39,6 @@ namespace RealMadridWeb.Controllers
             return View(vm);
         }
 
-        // ── Watchlist ──────────────────────────────────────────────────────────
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -60,8 +58,7 @@ namespace RealMadridWeb.Controllers
             return Redirect(returnUrl ?? Url.Action("Index", "Profile")!);
         }
 
-        // ── Favorite Players ───────────────────────────────────────────────────
-
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddFavoritePlayer(int playerId, string? returnUrl)
@@ -79,8 +76,6 @@ namespace RealMadridWeb.Controllers
             await _profileService.RemoveFavoritePlayerAsync(userId, playerId);
             return Redirect(returnUrl ?? Url.Action("Index", "Profile")!);
         }
-
-        // ── Comments ───────────────────────────────────────────────────────────
 
         [HttpPost]
         [ValidateAntiForgeryToken]

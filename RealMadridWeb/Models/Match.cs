@@ -19,7 +19,7 @@ namespace RealMadridWeb.Models
         public DateTime Date { get; set; } = DateTime.Now;
 
         [Required]
-        public string Venue { get; set; } = "Home"; // Va reține "Home" sau "Away"
+        public string Venue { get; set; } = "Home"; 
 
         public string? HomeTeamLogoUrl { get; set; }
         public string? AwayTeamLogoUrl { get; set; }
