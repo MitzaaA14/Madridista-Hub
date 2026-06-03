@@ -61,7 +61,10 @@ if (!app.Environment.IsDevelopment())
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseHttpsRedirection();
+if (app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
@@ -74,6 +77,8 @@ app.MapControllerRoute(
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
+    var db = services.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
     await RealMadridWeb.Data.DataSeeder.SeedRolesAndAdminAsync(services);
 }
 

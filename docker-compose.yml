@@ -1,32 +1,45 @@
-version: '3.8'
+name: student-${USER:-CHANGE_ME}
 
 services:
   db:
-    image: postgres:16
-    container_name: realmadrid_db
+    image: postgres:16-alpine
+    container_name: student-${USER:-CHANGE_ME}-db
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: RealMadridPassword2026
-      POSTGRES_DB: realmadrid_cms
-    ports:
-      - "5432:5432"
+      POSTGRES_USER:     ${DB_USER:-${SUBDOMAIN:-${USER:-app}}}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-${SUBDOMAIN:-${USER:-app}}-demo-pass-2026}
+      POSTGRES_DB:       ${DB_NAME:-${SUBDOMAIN:-${USER:-app}}}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-${SUBDOMAIN:-${USER:-app}}}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks: [studlab_net]
+    restart: unless-stopped
 
-  web:
+  api:
     build:
       context: ./RealMadridWeb
       dockerfile: Dockerfile
-    container_name: realmadrid_web
-    ports:
-      - "8080:8080"
-    environment:
-      DATABASE_URL: "Host=db;Port=5432;Database=realmadrid_cms;Username=admin;Password=RealMadridPassword2026"
+    container_name: student-${USER:-CHANGE_ME}-api
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "Host=student-${USER:-CHANGE_ME}-db;Port=5432;Database=${DB_NAME:-${SUBDOMAIN:-${USER:-app}}};Username=${DB_USER:-${SUBDOMAIN:-${USER:-app}}};Password=${DB_PASSWORD:-${SUBDOMAIN:-${USER:-app}}-demo-pass-2026}"
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
+    expose: ["8080"]
+    networks: [studlab_net]
+    restart: unless-stopped
 
 volumes:
-  postgres_data:
+  db_data:
+
+networks:
+  studlab_net:
+    external: true
+    name: studlab_net
 
 
 
