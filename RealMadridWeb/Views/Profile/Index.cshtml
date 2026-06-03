@@ -89,7 +89,7 @@
     .empty-state .icon { font-size: 2.5rem; margin-bottom: .5rem; }
 </style>
 
-<!-- Header profil -->
+
 <div class="profile-header d-flex align-items-center gap-3">
     <div class="profile-avatar">
         @Model.Email.Substring(0,1).ToUpper()
@@ -100,7 +100,7 @@
     </div>
 </div>
 
-<!-- Taburi -->
+
 <ul class="nav tab-nav border-bottom mb-4" id="profileTabs">
     <li class="nav-item">
         <a class="nav-link active" data-bs-toggle="tab" href="#watchlist">
@@ -133,7 +133,7 @@
 
 <div class="tab-content">
 
-    <!-- TAB: Watchlist -->
+
     <div class="tab-pane fade show active" id="watchlist">
         @if (!Model.Watchlist.Any())
         {
@@ -168,7 +168,7 @@
         }
     </div>
 
-    <!-- TAB: Favorite Players -->
+
     <div class="tab-pane fade" id="favorites">
         @if (!Model.FavoritePlayers.Any())
         {
@@ -212,7 +212,7 @@
         }
     </div>
 
-    <!-- TAB: Comments -->
+
     <div class="tab-pane fade" id="comments">
         @if (!Model.RecentComments.Any())
         {
