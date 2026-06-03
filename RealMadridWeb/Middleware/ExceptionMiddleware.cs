@@ -35,8 +35,7 @@ namespace RealMadridWeb.Middleware
             var response = new
             {
                 StatusCode = context.Response.StatusCode,
-                Message = "Internal Server Error from the custom middleware.",
-                Detailed = exception.Message
+                Message = "An unexpected error occurred. Please try again later."
             };
 
             var json = JsonSerializer.Serialize(response);

@@ -96,7 +96,7 @@
     <!-- Squad -->
     <div class="card border-0 shadow-sm mb-4" style="border-radius: 15px;">
         <div class="card-body p-4">
-            <h5 class="fw-bold mb-3" style="color: #0f1c3f;">🏟️ Squad in this Match</h5>
+            <h5 class="fw-bold mb-3" style="color: #0f1c3f;">Squad in this Match</h5>
 
             @if (!playerMatches.Any())
             {   
@@ -152,7 +152,7 @@
     {
         <div class="card border-0 shadow-sm mb-4" style="border-radius: 15px;">
             <div class="card-body p-4">
-                <h5 class="fw-bold mb-3" style="color: #0f1c3f;">➕ Add Player to Match</h5>
+                <h5 class="fw-bold mb-3" style="color: #0f1c3f;">Add Player to Match</h5>
                 <form asp-action="AddPlayer" method="post" class="row g-3 align-items-end">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="matchId" value="@Model.Id" />
@@ -181,7 +181,7 @@
     <!-- ── COMENTARII ────────────────────────────────────────────────── -->
     <div class="card border-0 shadow-sm" style="border-radius: 15px;">
         <div class="card-body p-4">
-            <h5 class="fw-bold mb-4" style="color: #0f1c3f;">💬 Comments (@comments.Count)</h5>
+            <h5 class="fw-bold mb-4" style="color: #0f1c3f;">Comments (@comments.Count)</h5>
 
             @if (TempData["CommentError"] != null)
             {
@@ -208,14 +208,14 @@
             else
             {
                 <div class="alert alert-light border mb-4 py-2 small">
-                    <a asp-controller="Account" asp-action="Login">Loghează-te</a> pentru a lăsa un comentariu.
+                    <a asp-controller="Account" asp-action="Login">Log in</a> to leave a comment.
                 </div>
             }
 
             <!-- Lista comentarii -->
             @if (!comments.Any())
             {
-                <p class="text-muted fst-italic text-center py-3">Fii primul care comentează acest meci!</p>
+                <p class="text-muted fst-italic text-center py-3">Be the first to comment on this match!</p>
             }
             else
             {
@@ -234,7 +234,6 @@
                             </div>
                             <div>@c.Content</div>
                         </div>
-                        <!-- Ștergere (doar userul propriu) -->
                         @if (c.UserId == currentUserId)
                         {
                             <form asp-controller="Profile" asp-action="DeleteComment" method="post" class="align-self-center">
@@ -243,7 +242,7 @@
                                 <input type="hidden" name="matchId" value="@Model.Id" />
                                 <button type="submit" class="btn btn-sm btn-outline-secondary"
                                         style="border-radius:6px; font-size:.7rem;"
-                                        onclick="return confirm('Ștergi comentariul?')">🗑</button>
+                                        onclick="return confirm('Delete this comment?')">X</button>
                             </form>
                         }
                     </div>

@@ -217,7 +217,7 @@
         @if (!Model.RecentComments.Any())
         {
             <div class="empty-state">
-                <div class="icon">💬</div>
+                <div class="icon">--</div>
                 <p class="mb-1 fw-semibold">No comments yet</p>
                 <small>Leave a comment from a match page</small>
             </div>
@@ -241,7 +241,7 @@
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="commentId" value="@c.Id" />
                             <input type="hidden" name="matchId" value="@c.MatchId" />
-                            <button type="submit" class="btn-remove">🗑</button>
+                            <button type="submit" class="btn-remove">X</button>
                         </form>
                     </div>
                 </div>

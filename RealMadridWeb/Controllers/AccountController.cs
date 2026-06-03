@@ -63,7 +63,7 @@ namespace RealMadridWeb.Controllers
                     return RedirectToAction("Index", "Home");
                 }
 
-                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                ModelState.AddModelError(string.Empty, "Invalid email or password.");
             }
             return View(model);
         }

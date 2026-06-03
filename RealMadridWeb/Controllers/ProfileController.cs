@@ -84,7 +84,7 @@ namespace RealMadridWeb.Controllers
             var userId = _userManager.GetUserId(User)!;
             if (string.IsNullOrWhiteSpace(content))
             {
-                TempData["CommentError"] = "Comentariul nu poate fi gol.";
+                TempData["CommentError"] = "Comment cannot be empty.";
             }
             else
             {
